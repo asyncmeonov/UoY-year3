@@ -1,0 +1,25 @@
+> We're trying to use the SisProto to get an estimate for two targets: CLASS and NSP
+--- potential assessments if we've succeeded: compare to LBE (the baseline value given by medical experts)?
+
+
+Data
+Tendency is categorical
+> all other are either discrete or continuous numerical variables
+> pattern net uses one hot encoding, we transform the classes like that
+
+-- CLASS --
+10 labels that are unequally distributed
+
+
+Q (for Simon): does each scan belong to a single patient? is it done over time? --> check nnproperty.net_divideMode
+Q: which features are important? highly correlated ones? Can we remove them?
+Q: should we split the data? Should we use only test or validation to assess performance
+Q: (for Simon): is the p value in the spreadsheet supposed to be 0 
+
+Initial empirical test
+> all features, pattern net, N = [1,2,3,4,5,10,15,20,25]; shows 10 has the best Cross entropy value 0.0426699 and a validation accuracy of 79.3%
+
+> only sispro features, pattern net
+
+> check correlations
+
