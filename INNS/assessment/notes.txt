@@ -11,15 +11,16 @@ Tendency is categorical
 10 labels that are unequally distributed
 
 
-Q (for Simon): does each scan belong to a single patient? is it done over time? --> check nnproperty.net_divideMode
+Q (for Simon): does each scan belong to a single patient? is it done over time? --> A: See the paper, check nnproperty.net_divideMode
 Q: which features are important? highly correlated ones? Can we remove them?
 Q: should we split the data? Should we use only test or validation to assess performance
-Q: (for Simon): is the p value in the spreadsheet supposed to be 0 
+Q: (for Simon): is the p value in the spreadsheet supposed to be 0 --> A: Ignore it
 
 Initial empirical test
 > all features, pattern net, N = [1,2,3,4,5,10,15,20,25]; shows 10 has the best Cross entropy value 0.0426699 and a validation accuracy of 79.3%
+> all features pattern net, N = [1:2:100] shows a noisy learning. CE value go down and up periodically with the increase of neurons
 
-> only sispro features, pattern net
+> only sispro features, pattern net, not better than all features
 
 > check correlations
 

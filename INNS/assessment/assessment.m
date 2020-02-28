@@ -1,15 +1,18 @@
-%N = [1,2,3,4,5,10,15,20,25];
-N = [1:2:30];
+% N = [1,2,3,4,5,10,15,20,25];
+N = [1:2:100];
 % N = [10];
 %transpose for matlab
-Xm = X{:,:}.';
+% Xm = X{:,:}.';
+Xm = X_SisProto.';
 Ym = ohY.';
-train_results = zeros(1, length(N)); % vector of pairs for neurons + result
+test_CE = zeros(1, length(N)); % vector of all the cross-entropy values against the test set
+test_conf = zeros(1, length(N)); % vector of all the fractions of samples missclasified in the test set
 
 for n = 1:length(N)
     net = patternnet(N(n));
     [net, tr] = train(net, Xm, Ym);
     
+    %extract only the entries used for test
     Xtest = Xm(:,tr.testInd);
     Ytest = Ym(:,tr.testInd);
     
@@ -17,13 +20,16 @@ for n = 1:length(N)
     %evaluating against testperf because it is the only unbiased dataset
     %todo, use the same extraction and get the confusion matrix values for
     %that to compare alongside the Cross entropy
-    
-    perf_train = perform(net, Ytest, predY);
-    train_results(n) = perf_train;
+    test_CE(n) = perform(net, Ytest, predY);
+    test_conf(n) = confusion(Ytest, predY);
 %     plotconfusion(Ytest, predY);
 end
-res = train_results.'
 
+figure('Name', 'Cross Entropy loss accross neurons');
+plot(N, test_CE);
+
+figure('Name', '% misclassified across neurons');
+plot(N, test_conf);
 
 
 
