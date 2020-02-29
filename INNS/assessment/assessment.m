@@ -1,13 +1,13 @@
 % N = [1,2,3,4,5,10,15,20,25];
-N = [5:1:15];
+N = [1:1:100];
 % N = [10];
 %transpose for matlab
-% Xm = X{:,:}.';
-Xm = X_SisPorto.';
+Xm = X{:,:}.';
+% Xm = X_SisPorto.';
 Ym = ohY.';
 test_CE = zeros(1, length(N)); % vector of all the cross-entropy values against the test set
 test_conf = zeros(1, length(N)); % vector of all the fractions of samples missclasified in the test set
-best_model = struct('CE', Inf, 'net', NaN, 'Y', NaN, 'predY', NaN);
+best_model = struct('neur', NaN, 'CE', Inf, 'net', NaN, 'Y', NaN, 'predY', NaN);
 for n = 1:length(N)
     net = patternnet(N(n));
     [net, tr] = train(net, Xm, Ym);
@@ -28,10 +28,11 @@ for n = 1:length(N)
         best_model.net = net;
         best_model.Y = Ytest;
         best_model.predY = predY;
+        best_model.neur = n;
     end 
 end
 
-saveFigs('SisPorto','fig', N, test_CE, test_conf, best_model);
+saveFigs('all','fig', N, test_CE, test_conf, best_model);
 
 function saveFigs(nameX, filetype, N, test_CE, test_conf, best_model)
   path = strcat('figures\',num2str(length(N)),'n_',nameX,'X');
@@ -51,6 +52,8 @@ function saveFigs(nameX, filetype, N, test_CE, test_conf, best_model)
   figure('Name', 'Best model Conf Matrix')
   plotconfusion(best_model.Y, best_model.predY);
   saveas(gcf,fullfile(path, 'best_conf_matrix'), filetype);
+  
+  save(fullfile(path,'best_model'), 'best_model');
 end
 
 
