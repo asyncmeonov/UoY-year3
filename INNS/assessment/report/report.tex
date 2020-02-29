@@ -2,7 +2,7 @@
 % Packages
 % -------------------
 \documentclass[11pt,a4paper]{article}
-\usepackage[utf8x]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{outlines}
 %\usepackage{gentium}
@@ -21,6 +21,9 @@
 
 \usepackage[all]{nowidow} % Tries to remove widows
 \usepackage[protrusion=true,expansion=true]{microtype} % Improves typography, load after fontpackage is selected
+\usepackage{csquotes}
+\usepackage[style=verbose-ibid,backend=bibtex]{biblatex}
+\bibliography{bibliography}
 
 %-----------------------
 % Set pdf information and add title, fill in the fields
@@ -31,10 +34,27 @@ pdftitle = {INNS Open Assessment},
 pdfauthor = {}
 }
 
+\title{INNS Open Assessment}
+
+\author{Y3843100}
+
+\date{\today}
 %-----------------------
 % Begin document
 %-----------------------
-\begin{document} %All text i dokumentet hamnar mellan dessa taggar, allt ovanför är formatering av dokumentet
+\begin{document}
+% ! ============
+% ! Terminology
+% ! ============
+% CTG - Cardiotocogram
+% FHR - fetal heart rate
+% STM - short term variability::  beat-to-beat differences between consecutive heart beats
+% LTM - long term variability:: variations in the interval length over N R-R intervals
+% R-R interval - beat-to-beat time.
+
+
+\maketitle
+
 
 \section{[20 marks] Discussion of architectures.}
 
@@ -53,6 +73,11 @@ To do this you might need to:
   \1 do some exploratory data analysis to see what the characteristics of the data are
   \1 consider the principles involved and relate them to the problem.
 \end{outline}
+
+\paragraph{}
+The dataset contains 2126 fetal cardiotocograms (CTGs) from different patients. The CTGs have been annotated by three expert obstetricians \autocite{Campos:2000}
+
+
 
 \section{[40 marks] Creation and application of neural networks.}
 This section should
