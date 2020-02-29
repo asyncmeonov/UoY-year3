@@ -75,7 +75,16 @@ To do this you might need to:
 \end{outline}
 
 \paragraph{}
-The dataset contains 2126 fetal cardiotocograms (CTGs) from different patients. The CTGs have been annotated by three expert obstetricians \autocite{Campos:2000}
+The dataset contains 2126 fetal cardiotocograms (CTGs) from different patients each of which has 23 different recorded features. The CTGs have been annotated by three expert obstetricians creating two categories of classess \autocite{Campos:2000}. One is a 10 tuple with respect to the fetal heart rate FHR patterns and the other is a three tuple regarding fetal state. This gives us two classification problems with respectivelly 10 and 3 distinct classes.
+
+%architectures to consider
+% single layer perceptron :: 
+%  + simple and interpretable
+%  - does not handle high dimentional data. Works only if our data is linearly separable.
+% multi-layer perceptron
+
+For both the 10 and 3 class problems we can rule out the single layer perseptron as its bipartitioning ability can discriminate up to two classes.
+With 23 complex features, we can immediately rule out single perceptron models as they do not handle high dimensional data.  
 
 
 

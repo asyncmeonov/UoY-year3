@@ -31,26 +31,25 @@ for n = 1:length(N)
     end 
 end
 
-saveFigs('SisPorto','fig', N, test_CE, test_conf, best_model);
+saveFigs('SisPorto','.fig', N, test_CE, test_conf, best_model);
 
 function saveFigs(nameX, filetype, N, test_CE, test_conf, best_model)
   path = strcat('figures\',num2str(length(N)),'n_',nameX,'X');
-  mkdir(path);
   figure('Name', 'Cross Entropy loss accross neurons');
   plot(N, test_CE);
   saveas(gcf, fullfile(path, 'delta_ce'), filetype);
 
   figure('Name', '% misclassified across neurons');
   plot(N, test_conf);
-  saveas(gcf,fullfile(path, 'delta_misclass_rate'), filetype);
+  saveas(gcf,strcat('delta_misclass_rate_',num2str(length(N)),'n_',nameX,'X'));
 
   figure('Name', 'Best model Error Histogram')
   ploterrhist(best_model.Y - best_model.predY);
-  saveas(gcf,fullfile(path, 'best_err_hist'), filetype);
+  saveas(gcf,strcat('best_err_hist_',num2str(length(N)),'n_',nameX,'X'));
 
   figure('Name', 'Best model Conf Matrix')
   plotconfusion(best_model.Y, best_model.predY);
-  saveas(gcf,fullfile(path, 'best_conf_matrix'), filetype);
+  saveas(gcf,strcat('best_conf_matrix_',num2str(length(N)),'n_',nameX,'X'));
 end
 
 
