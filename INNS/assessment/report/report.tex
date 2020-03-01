@@ -75,24 +75,29 @@ To do this you might need to:
 \end{outline}
 
 \paragraph{}
-The dataset contains 2126 fetal cardiotocograms (CTGs) from different patients each of which has 23 different recorded features. The CTGs have been annotated by three expert obstetricians creating two categories of classess \autocite{Campos:2000}. One is a 10 tuple with respect to the fetal heart rate FHR patterns and the other is a three tuple regarding fetal state. This gives us two classification problems with respectivelly 10 and 3 distinct classes.
+The dataset contains 2126 fetal cardiotocograms (CTGs) from different patients each of which has 23 different recorded features. The CTGs have been annotated by three expert obstetricians creating two categories of classes \autocite{Campos:2000}. One is a 10 tuple with respect to the fetal heart rate FHR patterns and the other is a three tuple regarding fetal state. This gives us two classification problems with respectively 10 and 3 distinct classes. Neural Network architectures that can handle classification problems need to have appropriate activation functions and the ability to specify the targets (outputs) as a finite set of discrete classes. We will discuss \textbf{three} different conceptual models with respect to their ability to be configured for classifying our high dimensional CTG dataset.
 
-%architectures to consider
-% single layer perceptron :: 
-%  + simple and interpretable
-%  - does not handle high dimentional data. Works only if our data is linearly separable.
-% multi-layer perceptron
+\subsubsection{Perceptron}
+The \textit{perceptron} is a basic network structure in which our output class \(y\) is determined by a weighted sum of our inputs \(X\) that is evaluated against some hard limit (threshold or activation function) \(y = H(\sum_{i}^{X} x_i w_i)\). Both the advantages and disadvantages of the perceptron are in its simplicity. On one hand we have intuitive behaviour in the fact that the perceptron creates a line that bipartitions our data space, but on the other we are limited only to linearly separable classes. Furthermore a perceptron can perform only binary classification or at best \textit{one-vs-many}. Our data does not appear to be linearly separable and our task is to discriminate between all the distinct classes, therefore we rule out the perceptron as a viable architecture.
 
-For both the 10 and 3 class problems we can rule out the single layer perseptron as its bipartitioning ability can discriminate up to two classes.
-With 23 complex features, we can immediately rule out single perceptron models as they do not handle high dimensional data.  
+\subsubsection{Multi-Layer Perceptron MLP networks}
+The shortcomings of the single perceptron are addressed by its orchestrated counterpart, the multi-layer perceptron \textit{MLP}. The three main differences as highlighted by Haykin \autocite{Haykin1998}:
+
+\begin{outline}
+  \1 activation functions must be differentiable, unlike the hard limits we had before
+  \1 between our input and output nodes we construct one or more \textit{hidden layers} containing one or more neurons with our modified activation function
+  \1 the input, output and hidden neurons are highly connected
+\end{outline}
+
+\subsubsection{Radial Basis Function RBF networks}
 
 
+\paragraph{}
+Relating the aforementioned properties of the different architectures we see that the MLP and RBF are theoretically viable for both of our classification problems. \textbf{[[relate net property to problem i.e. what the dataset gives us and what the network provides to solve that, high dimensions, many classes, not enough data (prone to overfitting), etc.]]}. After further investigation of the semantic meaning of the we will empirically compare the two networks with different formulation of our problem. %TODO: revisit this after you know which algorithms we're using exactly.
 
 \section{[40 marks] Creation and application of neural networks.}
 This section should
 \begin{outline}
-    
-
   \1 Describe the chosen inputs to (and outputs from) the networks.
   \1 Describe how the data you started with have been preprocessed.
   \1 Give sufficient detail for someone else to process a new batch of data for use with the final trained network.
@@ -113,15 +118,17 @@ This section should
 \begin{outline}
   \1 Explain the metric or metrics you have used for comparison between networks.
   \1 Give a synopsis of the results obtained from the final selected network.
-  \1 Evaluate the results, in relation to the problem posed in the scenario. To do this you might need to:
+  \1 Evaluate the results, in relation to the problem posed in the scenario. 
+\end{outline}
+\begin{outline}
+To do this you might need to:
   \1 Consider different metrics for performance, appropriate to the problem. Remember that a Mean Squared Error (MSE) on its own is not always helpful in judging how well something works.
   \1 Identify anything of interest in the results, such as areas of particularly good or poor performance, or variation between different training runs.
   \1 Reflect on the conclusions that you may draw from the results, and whether they are showing that the neural network is useful in this case.
 \end{outline}
 
 \section{[20 marks] Further application}
-In the previous sections you used a neural network to convert cardiotocogram features
-into a diagnosis. Another tool for detection and diagnosis of fetal abnormalities is the ultrasound scan, that produces an image of the a section through the fetus. Interpreting fetal scans is a highly complex task which require years of training. Assume the availability of a large number of fetal scan images, both normal and with some abnormality, and labelled to indicate different types of abnormalities. The task is for a neural network to process new ultrasound images, and to indicate which images needed further investigation. This section should discuss the issues you would need to consider in relation to:
+In the previous sections you used a neural network to convert cardiotocogram features into a diagnosis. Another tool for detection and diagnosis of fetal abnormalities is the ultrasound scan, that produces an image of the a section through the fetus. Interpreting fetal scans is a highly complex task which require years of training. Assume the availability of a large number of fetal scan images, both normal and with some abnormality, and labelled to indicate different types of abnormalities. The task is for a neural network to process new ultrasound images, and to indicate which images needed further investigation. This section should discuss the issues you would need to consider in relation to:
 \begin{outline}
   \1 selection of an architecture
   \1 construction of the network
