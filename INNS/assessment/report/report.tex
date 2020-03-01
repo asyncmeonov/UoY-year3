@@ -75,27 +75,41 @@ To do this you might need to:
 \end{outline}
 
 \paragraph{}
-The dataset contains 2126 fetal cardiotocograms (CTGs) from different patients each of which has 23 different recorded features. The CTGs have been annotated by three expert obstetricians creating two categories of classes \autocite{Campos:2000}. One is a 10 tuple with respect to the fetal heart rate FHR patterns and the other is a three tuple regarding fetal state. This gives us two classification problems with respectively 10 and 3 distinct classes. Neural Network architectures that can handle classification problems need to have appropriate activation functions and the ability to specify the targets (outputs) as a finite set of discrete classes. We will discuss \textbf{three} different conceptual models with respect to their ability to be configured for classifying our high dimensional CTG dataset.
+The dataset contains 2126 fetal cardiotocograms (CTGs) from different patients each of which has 21 different recorded features (input variables). The CTGs have been annotated by three expert obstetricians creating two categories of classes \autocite{Campos:2000}. One is a 10 tuple with respect to the fetal heart rate FHR patterns and the other is a three tuple regarding fetal state. This gives us two supervised classification problems with respectively 10 and 3 distinct classes. Neural Network architectures that can handle classification problems need to have appropriate activation functions and the ability to specify the targets (outputs) as a finite set of discrete classes. We will discuss \textbf{three} different conceptual models with respect to their ability to be configured for classifying our high dimensional CTG dataset.
 
 \subsubsection{Perceptron}
-The \textit{perceptron} is a basic network structure in which our output class \(y\) is determined by a weighted sum of our inputs \(X\) that is evaluated against some hard limit (threshold or activation function) \(y = H(\sum_{i}^{X} x_i w_i)\). Both the advantages and disadvantages of the perceptron are in its simplicity. On one hand we have intuitive behaviour in the fact that the perceptron creates a line that bipartitions our data space, but on the other we are limited only to linearly separable classes. Furthermore a perceptron can perform only binary classification or at best \textit{one-vs-many}. Our data does not appear to be linearly separable and our task is to discriminate between all the distinct classes, therefore we rule out the perceptron as a viable architecture.
+The \textit{perceptron} is a basic network structure in which our output class \(y\) is determined by a weighted sum of our inputs \(X\) that is evaluated against some hard limit (threshold or activation function) \(y = H(\sum_{i}^{X} x_i w_i)\). Both the advantages and disadvantages of the perceptron are in its simplicity. On one hand we have intuitive behaviour in the fact that the perceptron finds a line that bipartitions our data space, but on the other we are limited only to linearly separable classes. Furthermore a perceptron can perform only binary classification or at best \textit{one-vs-many}.
 
 \subsubsection{Multi-Layer Perceptron MLP networks}
-The shortcomings of the single perceptron are addressed by its orchestrated counterpart, the multi-layer perceptron \textit{MLP}. The three main differences as highlighted by Haykin \autocite{Haykin1998}:
+The shortcomings of the single perceptron are addressed by its orchestrated counterpart, the multi-layer perceptron \textit{MLP}. The three main differences as highlighted by Haykin \autocite{Haykin1998} are:
 
 \begin{outline}
-  \1 neuron activation functions are differentiable, unlike the hard limits we had before
-  \1 between our input and output nodes we construct one or more \textit{hidden layers} containing one or more neurons
+  \1 neuron activation functions are differentiable (sigmoid functions are often chosen), unlike the hard limits we had before
+  \1 between our input and output layers we construct one or more \textit{hidden layers} containing one or more neurons
   \1 the input, output and hidden neurons are highly connected
 \end{outline}
 
+% ? Argument about we cannot add more datapoints therefore we will have to find the best network.
+By composing neurons together we can learn more complex patterns at the expense of more complicated learning rules. The benefit of MLPs is that that they can approximate virtually any function provided there is enough data. The disadvantages of using MLPs come from the fact that they are prone to overfitting on high dimensional data and they do not necessarily have a simple intuitive meaning as the perceptron classifier. We can theoretically use MLPs for our two classification problems as we can specify the number of output neurons to be three and ten respectively. An issue arrises with what network structure would be viable to capture the properties of our high dimensional data. 
+
+
+
+
+%Due to the continuous activation function, neurons in MLPs are able to propagate their weights forward in the network and influence subsequent neurons. Because we have a supervised problem, we can define the notion of error \(e\) as the difference between the true classes \(d\) and our network's outputs. The error at each neuron is \(E = \frac{1}{2}e^{2}\). Training the MLP is a matter of minimising the error with respect to the weights which is often done by a gradient descent algorithm. An issue arrises with the fact that the error is known only at the output layer. To correctly adjust the weights on each neuron, we use a backpropagation method to communicate how weight changes affect the error. Knowing the mechanisms involved in using MLPs we can determine two issues: what network structure is viable for our problems and how can we learn the weights of each neuron now that they are connected?
 
 
 \subsubsection{Radial Basis Function RBF networks}
-
+RBF networks are a single hidden layer MLP where euclidean distance between the inputs and some point in space associated with the neuron's centre is computed instead of linear activation function. More specifically, the hidden layers calculate a radially-symmetric function (usually a Gaussian) from the inputs \(f_i(x) = \exp \left(-\frac{{\mid x - c_i \mid}^2}{2 \sigma^2} \right) \) where \(c_i\) is the centre for neuron \(i\). The outputs are the weighted sums of the different basis functions in the hidden layer.
+RBF networks classify new datapoints by assosiating them to the closest \(c_i\). The benefit of this architecture is that it is often faster to train compared to MLPs, but a substantial drawback is that they struggle with generalising outside of the margins of the training data. But an argument can be made that for our specific task, if we get new patient data that has low response for all of our current classes, that is a potential indicator of an annomaly that would require further investigation.
 
 \paragraph{}
-Relating the aforementioned properties of the different architectures we see that the MLP and RBF are theoretically viable for both of our classification problems. \textbf{[[relate net property to problem i.e. what the dataset gives us and what the network provides to solve that, high dimensions, many classes, not enough data (prone to overfitting), etc.]]}. After further investigation of the semantic meaning of the we will empirically compare the two networks with different formulation of our problem. %TODO: revisit this after you know which algorithms we're using exactly.
+In the choice of an architecture it is important to look at the data itself. Our data does not appear to be linearly separable and our task is to discriminate between all the distinct classes, therefore we rule out the perceptron as a viable architecture.
+MLP and RBF are theoretically viable for both of our classification problems. They both allow for supervised multiclass classification problems and they can solve non-linearly separable problems. Because of our argument that low response from the RBF network is a useful indicator for an anomaly, we will still consider RBFs in this experiment. The severity of the disadvantages for MLP models can be lessened by paying close attention to the meaning of the data and incrementally explore different network structures, applying Occam's razor as a prerequisite. Because of this reasoning, we will empirically compare different MLP and RBF networks for our two classification problems.
+
+%We will assume that the goal of such a classification tool is to be a good predictor of FHR anomalies even if 
+
+
+% The severity of the disadvantages of the two architectures can be lessened by paying close attention to the meaning of data and by incrementally  .After further investigation of the semantic meaning of the we will empirically compare the two networks with different formulation of our problem. %TODO: revisit this after you know which algorithms we're using exactly.
 
 \section{[40 marks] Creation and application of neural networks.}
 This section should
@@ -106,6 +120,19 @@ This section should
   \1 State which training algorithm you selected, and explain how you selected that training algorithm. For this training algorithm, give sufficient detail to enable someone to use the same training algorithm in exactly the same way. This does NOT mean (for example) describing gradient descent in great detail. It DOES mean giving any parameters, initialisation, etc, even if they are the toolbox defaults.
   \1 Explain the process you went through in making the selection of the final architecture, for example, the number of neurons or the number of layers to use.
 \end{outline}
+
+%Todo: Describe the chosen inputs to (and outputs from) the networks.
+%The total set of inputs has been predefined 
+
+%Todo: Describe how the data you started with have been preprocessed.
+% > data is temporal
+% > Noise of data -> signal noise reduction has been done beforehand (FHR spike removal and filter of high frequency noise):: median of 8% signal loss
+% > Imbalanced dataset -> plot CLASS hist, we are going to oversample? 
+% > Numerical/Categorical :: all values are numerical and the only category is the Tendency which is already formatted in a usable numeric format
+% > Correlated variables 
+% > Skewed distributions handling and outliers
+% > 
+% > Important features assessment. PCA ?
 
 
 To do this you might need to:
@@ -128,6 +155,11 @@ To do this you might need to:
   \1 Identify anything of interest in the results, such as areas of particularly good or poor performance, or variation between different training runs.
   \1 Reflect on the conclusions that you may draw from the results, and whether they are showing that the neural network is useful in this case.
 \end{outline}
+
+\paragraph{}
+All models have been trained with a cross-validation with a ratio \textbf{[[train,test,validation]]} respecitevely for the train, test and validation datasets. All metrics listed here are against the test set as it is the only truly unbiased estimator as the validation set is used to tune the different hyperparameters of our network \textbf{[[cn]]}. 
+
+
 
 \section{[20 marks] Further application}
 In the previous sections you used a neural network to convert cardiotocogram features into a diagnosis. Another tool for detection and diagnosis of fetal abnormalities is the ultrasound scan, that produces an image of the a section through the fetus. Interpreting fetal scans is a highly complex task which require years of training. Assume the availability of a large number of fetal scan images, both normal and with some abnormality, and labelled to indicate different types of abnormalities. The task is for a neural network to process new ultrasound images, and to indicate which images needed further investigation. This section should discuss the issues you would need to consider in relation to:
