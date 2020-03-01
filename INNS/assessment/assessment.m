@@ -2,8 +2,9 @@
 N = [1:1:100];
 % N = [10];
 %transpose for matlab
-Xm = X{:,:}.';
+% Xm = X{:,:}.';
 % Xm = X_SisPorto.';
+Xm = X{:,:}(:,Xi).'; % first 4 important features [20,2,21,5]
 Ym = ohY.';
 test_CE = zeros(1, length(N)); % vector of all the cross-entropy values against the test set
 test_conf = zeros(1, length(N)); % vector of all the fractions of samples missclasified in the test set
@@ -32,7 +33,7 @@ for n = 1:length(N)
     end 
 end
 
-saveFigs('all','fig', N, test_CE, test_conf, best_model);
+saveFigs('4_important','fig', N, test_CE, test_conf, best_model);
 
 function saveFigs(nameX, filetype, N, test_CE, test_conf, best_model)
   path = strcat('figures\',num2str(length(N)),'n_',nameX,'X');
