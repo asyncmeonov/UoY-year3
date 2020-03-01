@@ -1,8 +1,0 @@
-features = CTG{:,:};
-target = Y{:,:};
-for i = length(features(1,:))
-    [ordered, ordi] = sort(features(:,i));
-    hold on;
-    plot(ordered, sort(target);
-    hold off;
-end
