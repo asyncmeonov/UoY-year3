@@ -1,10 +1,10 @@
 % N = [1,2,3,4,5,10,15,20,25];
-N = [1:1:100];
-% N = [10];
+% N = [1:1:100];
+%N = [10];
 %transpose for matlab
-% Xm = X{:,:}.';
+%Xm = X{:,:}.';
 % Xm = X_SisPorto.';
-Xm = X{:,:}(:,Xi).'; % first 4 important features [20,2,21,5]
+ Xm = X{:,:}(:,[20,2,21,5]).'; % first 4 important features
 Ym = ohY.';
 test_CE = zeros(1, length(N)); % vector of all the cross-entropy values against the test set
 test_conf = zeros(1, length(N)); % vector of all the fractions of samples missclasified in the test set
@@ -33,10 +33,14 @@ for n = 1:length(N)
     end 
 end
 
-saveFigs('4_important','fig', N, test_CE, test_conf, best_model);
+saveFigs('4_important','fig', N, test_CE, test_conf, best_model, true);
 
-function saveFigs(nameX, filetype, N, test_CE, test_conf, best_model)
-  path = strcat('figures\',num2str(length(N)),'n_',nameX,'X');
+function saveFigs(nameX, filetype, N, test_CE, test_conf, best_model, isTest)
+  if isTest
+    path = strcat('figures\testfigs\',num2str(length(N)),'n_',nameX,'X');
+  else
+    path = strcat('figures\',num2str(length(N)),'n_',nameX,'X');
+  end
   mkdir(path);
   figure('Name', 'Cross Entropy loss accross neurons');
   plot(N, test_CE);
@@ -54,7 +58,29 @@ function saveFigs(nameX, filetype, N, test_CE, test_conf, best_model)
   plotconfusion(best_model.Y, best_model.predY);
   saveas(gcf,fullfile(path, 'best_conf_matrix'), filetype);
   
+  jframe = view(best_model.net);
+  saveJframe(jframe, fullfile(path, 'net_architecture'));
+  
   save(fullfile(path,'best_model'), 'best_model');
+end
+
+function saveJframe(frame, filepath)
+  %# create it in a MATLAB figure
+  hFig = figure('Menubar','none', 'Position',[100 100 565 166]);
+  jpanel = get(frame,'ContentPane');
+  [~,h] = javacomponent(jpanel);
+  set(h, 'units','normalized', 'position',[0 0 1 1])
+
+%# close java window
+  frame.setVisible(false);
+  frame.dispose();
+
+%# print to file
+  set(hFig, 'PaperPositionMode', 'auto');
+  saveas(hFig, strcat(filepath, '.png'));
+
+%# close figure
+  close(hFig)
 end
 
 

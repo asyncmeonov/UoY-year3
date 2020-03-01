@@ -2,3 +2,4 @@ INNS/assessment/report/build/*
 !INNS/assessment/report/build/report.pdf
 
 *.asv
+INNS/assessment/figures/testfigs/*
