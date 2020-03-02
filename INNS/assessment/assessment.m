@@ -1,72 +1,86 @@
-N = [1,2,3,4,5,10,15,20,25];
+% N = [1,2,3,4,5,10,15,20,25];
 L = N;
-% N = [1:1:100];
+N = [1:1:100];
 %N = [10];
 %transpose for matlab
-Xm = X{:,:}.';
+% Xm = X{:,:}.';
 % Xm = X_SisPorto.';
 %Xm = X{:,:}(:,[20,2,21,5]).'; % first 4 important features
-Ym = ohY.';
+%Ym = ohY.';
+Xm = Xo.';
+Ym = preprocess.one_hot_encode(Yo).';
 test_CE = zeros(1, length(N)); % vector of all the cross-entropy values against the test set
 test_conf = zeros(1, length(N)); % vector of all the fractions of samples missclasified in the test set
 best_model = struct('neur', NaN, 'CE', Inf, 'net', NaN, 'Y', NaN, 'predY', NaN);
 
 %single hidden layer
-% for n = 1:length(N)
-%     net = patternnet(N(n));
-%     [net, tr] = train(net, Xm, Ym);
-%     
-%     %extract only the entries used for test
-%     Xtest = Xm(:,tr.testInd);
-%     Ytest = Ym(:,tr.testInd);
-%     
-%     predY = net(Xtest);
-%     %evaluating against testperf because it is the only unbiased dataset
-%     %todo, use the same extraction and get the confusion matrix values for
-%     %that to compare alongside the Cross entropy
-%     test_CE(n) = perform(net, Ytest, predY);
-%     test_conf(n) = confusion(Ytest, predY);
-%     
-%     if test_CE(n) < best_model.CE
-%         best_model.CE = test_CE(n);
-%         best_model.net = net;
-%         best_model.Y = Ytest;
-%         best_model.predY = predY;
-%         best_model.neur = n;
-%     end 
-% end
-
-%multiple hidden layers
 for n = 1:length(N)
-    idL = L < N(n); % subsequent hl must always have less neurons than the preceding
-    HL = L(idL);
-    for l = 1:length(HL)
-        
-        net = patternnet([N(n),HL(l)]);
-        [net, tr] = train(net, Xm, Ym);
-
-        %extract only the entries used for test
-        Xtest = Xm(:,tr.testInd);
-        Ytest = Ym(:,tr.testInd);
-
-        predY = net(Xtest);
-        %evaluating against testperf because it is the only unbiased dataset
-        %todo, use the same extraction and get the confusion matrix values for
-        %that to compare alongside the Cross entropy
-        test_CE(n) = perform(net, Ytest, predY);
-        test_conf(n) = confusion(Ytest, predY);
-
-        if test_CE(n) < best_model.CE
-            best_model.CE = test_CE(n);
-            best_model.net = net;
-            best_model.Y = Ytest;
-            best_model.predY = predY;
-            best_model.neur = n;
-        end 
-    end
+    net = patternnet(N(n));
+    
+%     net.divideFcn = 'divideblock';
+    net.divideParam.trainRatio = 0.7;  %default
+    net.divideParam.valRatio = 0.15;   %default
+    net.divideParam.testRatio = 0.15;  %default
+    
+    [net, tr] = train(net, Xm, Ym);
+    
+    %extract only the entries used for test
+    Xtest = Xm(:,tr.testInd);
+    Ytest = Ym(:,tr.testInd);
+    
+    predY = net(Xtest);
+    %evaluating against testperf because it is the only unbiased dataset
+    %todo, use the same extraction and get the confusion matrix values for
+    %that to compare alongside the Cross entropy
+    test_CE(n) = perform(net, Ytest, predY);
+    test_conf(n) = confusion(Ytest, predY);
+    
+    if test_CE(n) < best_model.CE
+        best_model.CE = test_CE(n);
+        best_model.net = net;
+        best_model.Y = Ytest;
+        best_model.predY = predY;
+        best_model.neur = n;
+    end 
 end
 
-saveFigs('two_layer','fig', N, test_CE, test_conf, best_model, true);
+
+
+% %multiple hidden layers
+% for n = 1:length(N)
+%     idL = L < N(n); % subsequent hl must always have less neurons than the preceding
+%     HL = L(idL);
+%     for l = 1:length(HL)
+%         
+%         net = patternnet([N(n),HL(l)]);
+%         [net, tr] = train(net, Xm, Ym);
+% 
+%         %extract only the entries used for test
+%         Xtest = Xm(:,tr.testInd);
+%         Ytest = Ym(:,tr.testInd);
+% 
+%         predY = net(Xtest);
+%         %evaluating against testperf because it is the only unbiased dataset
+%         %todo, use the same extraction and get the confusion matrix values for
+%         %that to compare alongside the Cross entropy
+%         test_CE(n) = perform(net, Ytest, predY);
+%         test_conf(n) = confusion(Ytest, predY);
+% 
+%         if test_CE(n) < best_model.CE
+%             best_model.CE = test_CE(n);
+%             best_model.net = net;
+%             best_model.Y = Ytest;
+%             best_model.predY = predY;
+%             best_model.neur = n;
+%         end 
+%     end
+% end
+
+ saveFigs('naive_oversample','fig', N, test_CE, test_conf, best_model, true);
+
+
+
+
 
 function saveFigs(nameX, filetype, N, test_CE, test_conf, best_model, isTest)
   if isTest
