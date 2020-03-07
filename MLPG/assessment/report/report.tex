@@ -1,0 +1,81 @@
+%--------------------
+% Packages
+% -------------------
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{outlines}
+%\usepackage{gentium}
+\usepackage{mathptmx} % Use Times Font
+
+
+\usepackage[pdftex]{graphicx} % Required for including pictures
+\usepackage[pdftex,linkcolor=black,pdfborder={0 0 0}]{hyperref} % Format links for pdf
+\usepackage{calc} % To reset the counter in the document after title page
+\usepackage{enumitem} % Includes lists
+
+\frenchspacing % No double spacing between sentences
+\linespread{1.2} % Set linespace
+\usepackage[a4paper, lmargin=0.1666\paperwidth, rmargin=0.1666\paperwidth, tmargin=0.1111\paperheight, bmargin=0.1111\paperheight]{geometry} %margins
+%\usepackage{parskip}
+
+\usepackage[all]{nowidow} % Tries to remove widows
+\usepackage[protrusion=true,expansion=true]{microtype} % Improves typography, load after fontpackage is selected
+\usepackage{csquotes}
+\usepackage[style=verbose-ibid,backend=bibtex]{biblatex}
+\bibliography{bibliography}
+
+%-----------------------
+% Set pdf information and add title, fill in the fields
+%-----------------------
+\hypersetup{ 	
+pdfsubject = {},
+pdftitle = {MLPG Open Assessment},
+pdfauthor = {}
+}
+
+\title{MLPG Open Assessment}
+
+\author{Y3843100}
+
+\date{\today}
+%-----------------------
+% Begin document
+%-----------------------
+\begin{document}
+
+
+\maketitle
+
+
+\section{Conditional independence in Bayesian networks}
+
+\paragraph{Independent pairs}
+\(I = \{(A,C),(A,E),(A,F),(B,C),(B,E),(B,F),(D,C),(D,E),(D,F)\}\)
+
+\paragraph{Independent pairs conditioned on \(Z = \{C,G\}\)}
+\(I = \emptyset\)
+
+\paragraph{Markov equivalent DAG}
+Reverse edges but maintain immoralities, i.e. change \(B\) edges \ref{fig1.3}
+%TODO: insert fig with edges reversed
+
+\paragraph{Non-Markov equivalent DAG}
+Change immoralities. I.e. reverse all edges from \(G\) \ref{fig.1.4}
+%TODO: insert fig with edges reversed
+
+\section{House prices with STAN}
+
+  \subsection{A simple model}
+
+  \subsection{A less simple model}
+
+  \subsection{Two models}
+
+  \subsection{A compromise model}
+
+\section{VB vs MCMC}
+
+\textit{In fewer than 200 words overall: (i) describe Hamiltonian MCMC, (ii) describe variational inference as done in Stan and (iii) discuss the pros and cons of both approaches. (Any equations or figures do not count towards the word count.}
+
+\section{Hidden Markov models}
