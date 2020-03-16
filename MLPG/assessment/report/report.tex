@@ -5,9 +5,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{outlines}
-%\usepackage{gentium}
+\usepackage{booktabs}
 \usepackage{mathptmx} % Use Times Font
-
 
 \usepackage[pdftex]{graphicx} % Required for including pictures
 \usepackage[pdftex,linkcolor=black,pdfborder={0 0 0}]{hyperref} % Format links for pdf
@@ -17,13 +16,12 @@
 \frenchspacing % No double spacing between sentences
 \linespread{1.2} % Set linespace
 \usepackage[a4paper, lmargin=0.1666\paperwidth, rmargin=0.1666\paperwidth, tmargin=0.1111\paperheight, bmargin=0.1111\paperheight]{geometry} %margins
-%\usepackage{parskip}
 
 \usepackage[all]{nowidow} % Tries to remove widows
 \usepackage[protrusion=true,expansion=true]{microtype} % Improves typography, load after fontpackage is selected
 \usepackage{csquotes}
-\usepackage[style=verbose-ibid,backend=bibtex]{biblatex}
-\bibliography{bibliography}
+\usepackage[style=ieee,backend=bibtex]{biblatex}
+\addbibresource{bibliography.bib}
 
 %-----------------------
 % Set pdf information and add title, fill in the fields
@@ -51,22 +49,54 @@ pdfauthor = {}
 \section{Conditional independence in Bayesian networks}
 
 \paragraph{Independent pairs}
-\(I = \{(A,C),(A,E),(A,F),(B,C),(B,E),(B,F),(D,C),(D,E),(D,F)\}\)
+\[I = \{(A,C),(A,E),(A,F),(B,C),(B,E),(B,F),(D,C),(D,E),(D,F)\}\]
 
 \paragraph{Independent pairs conditioned on \(Z = \{C,G\}\)}
-\(I = \emptyset\)
+
+$I = \emptyset$
 
 \paragraph{Markov equivalent DAG}
-Reverse edges but maintain immoralities, i.e. change \(B\) edges \ref{fig1.3}
-%TODO: insert fig with edges reversed
+Reverse edges but maintain immoralities, i.e. change \(B\) edges \textit{fig \ref{fig:1.3}}
+
+\begin{figure}[htb]
+  \centering
+    \includegraphics[width=\textwidth]{../q1/fig13.png}
+    \caption{Question 1.3 Markov equivalent DAG}
+  \label{fig:1.3}
+\end{figure}
 
 \paragraph{Non-Markov equivalent DAG}
-Change immoralities. I.e. reverse all edges from \(G\) \ref{fig.1.4}
-%TODO: insert fig with edges reversed
+Change immoralities. I.e. reverse all edges from \(G\) \textit{fig \ref{fig:1.4}}
+\begin{figure}[htb]
+  \centering
+    \includegraphics[width=\textwidth]{../q1/fig14.png}
+    \caption{Question 1.4 Non-Markov equivalent DAG}
+  \label{fig:1.4}
+\end{figure}
 
 \section{House prices with STAN}
 
   \subsection{A simple model}
+  Summary for MCMC (four chains, 1000 iterations) can be found in table \ref{tab:2.1} and figure \ref{fig:2.1}.
+  %Say 95 confidence interval compared to the mean is pretty solid. (i.e. the interval is tight around the mean + talk about SD)
+%TODO: Say something about "Explain what steps you have taken to ensure that you have computed reasonable approximations to the true posterior distributions over your parameters." in respect to the plots, conf interval, etc
+  We can state that our estimated posteriors approximate the true distributions as all chains have converged \(\hat{R} = 1\), which is also observed by the beta plot. The preference for MCMC sampling over variational inference was due to the fact that the size of our dataset and the length of this assessment permits the usage of the more computationally intensive method. In addition, the asymptotic correctness of the posterior justifies the larger computational expense \parencite{BleiVI}.
+  %This model asserts the assumption that althought the data represents the house prices of two distinct locations, the price formation given Age and Size is the same for the two regions.
+
+  \begin{figure}[htb]
+    \centering
+      \includegraphics[width=\textwidth]{../q21/q21_summary_table.png}
+      \caption{Question 2.1 plot summary}
+    \label{tab:2.1}
+  \end{figure}
+
+  \begin{figure}[htb]
+    \centering
+      \includegraphics[width=\textwidth]{../q21/separated_features.png}
+      \caption{Question 2.1 plot summary}
+    \label{fig:2.1}
+  \end{figure}
+
 
   \subsection{A less simple model}
 
@@ -79,3 +109,6 @@ Change immoralities. I.e. reverse all edges from \(G\) \ref{fig.1.4}
 \textit{In fewer than 200 words overall: (i) describe Hamiltonian MCMC, (ii) describe variational inference as done in Stan and (iii) discuss the pros and cons of both approaches. (Any equations or figures do not count towards the word count.}
 
 \section{Hidden Markov models}
+
+\printbibliography
+\end{document}

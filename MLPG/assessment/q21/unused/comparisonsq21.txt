@@ -1,0 +1,16 @@
+THE FIT:
+Inference for Stan model: anon_model_8793ee7991c569bf6e75b3a265a1cc37.
+4 chains, each with iter=1000; warmup=500; thin=1;
+post-warmup draws per chain=500, total post-warmup draws=2000.
+
+          mean se_mean     sd   2.5%    25%    50%    75%  97.5%  n_eff   Rhat
+alpha   -23.25    0.12   3.47 -29.62 -25.68 -23.19 -20.94 -16.28    883    1.0
+beta[1]  58.29    0.06   2.23  53.95  56.78  58.33  59.73  62.74   1529    1.0
+beta[2]   0.67  7.0e-4   0.02   0.63   0.66   0.67   0.68   0.71    891   1.01
+beta[3]    0.1  8.5e-4   0.03   0.04   0.08    0.1   0.12   0.15   1097    1.0
+sigma      9.5    0.02   0.76   8.16   8.96   9.45   9.98  11.09   1379    1.0
+lp__    -244.7    0.06   1.62 -248.7 -245.5 -244.3 -243.5 -242.5    828   1.01
+
+
+note
+1::L 2::S 3::A
