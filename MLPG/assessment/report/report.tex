@@ -77,7 +77,7 @@ Change immoralities. I.e. reverse all edges from \(G\) \textit{fig \ref{fig:1.4}
 \section{House prices with STAN}
 
   \subsection{A simple model}
-  Summary for MCMC (four chains, 1000 iterations) can be found in table \ref{tab:2.1} and figure \ref{fig:2.1}.
+  Summary for MCMC (four chains, 1000 iterations) can be found in figures \ref{fig:2.1} and \ref{tab:2.1}.
   %Say 95 confidence interval compared to the mean is pretty solid. (i.e. the interval is tight around the mean + talk about SD)
 %TODO: Say something about "Explain what steps you have taken to ensure that you have computed reasonable approximations to the true posterior distributions over your parameters." in respect to the plots, conf interval, etc
   We can state that our estimated posteriors approximate the true distributions as all chains have converged \(\hat{R} = 1\), which is also observed by the beta plot. The preference for MCMC sampling over variational inference was due to the fact that the size of our dataset and the length of this assessment permits the usage of the more computationally intensive method. In addition, the asymptotic correctness of the posterior justifies the larger computational expense \parencite{BleiVI}.
@@ -86,7 +86,7 @@ Change immoralities. I.e. reverse all edges from \(G\) \textit{fig \ref{fig:1.4}
   \begin{figure}[htb]
     \centering
       \includegraphics[width=\textwidth]{../q21/q21_summary_table.png}
-      \caption{Question 2.1 plot summary}
+      \caption{Question 2.1 posterior table summary}
     \label{tab:2.1}
   \end{figure}
 
@@ -99,6 +99,21 @@ Change immoralities. I.e. reverse all edges from \(G\) \textit{fig \ref{fig:1.4}
 
 
   \subsection{A less simple model}
+  Denoting that size has a positive effect on price does not affect performance. This is potentially due to the fact that the data already embodies this fact and explicitly stating it does not give us any new knowledge (see \textit{fig \ref{fig:2.2}} and \textit{\ref{tab:2.2}}).
+
+  \begin{figure}[htb]
+    \centering
+      \includegraphics[width=\textwidth]{../q22/q22_table_summary.png}
+      \caption{Question 2.2 posterior table summary}
+    \label{tab:2.2}
+  \end{figure}
+
+  \begin{figure}[htb]
+    \centering
+      \includegraphics[width=\textwidth]{../q22/q22_plot_summary.png}
+      \caption{Question 2.2 plot summary}
+    \label{fig:2.2}
+  \end{figure}
 
   \subsection{Two models}
 
