@@ -8,28 +8,33 @@ stan_model = """
 data {
     int<lower=0> N; // number of data items
     vector[N] A; // predictor Age
-    vector<lower = 0, upper = 1>[N] L; // predictor Locality
     vector[N] S; // predictor Size
     vector[N] P; // outcome vector
 }
 parameters {
     real alpha; // intercept
-    real beta_L;
     real beta_A;
-    real beta_S; 
+    real<lower=0> beta_S; 
     real<lower=0> sigma; // error scale
 }
 model {
-    P ~ normal(A * beta_A + S * beta_S + L * beta_L + alpha, sigma); // likelihood
+    P ~ normal(A * beta_A + S * beta_S + alpha, sigma); // likelihood
 }
 """
 
-
 def main():
     sm = pystan.StanModel(model_code=stan_model)
-    fit = sm.sampling(data=q2dat.datadkt, iter=1000, chains=4)
-    print("THE FIT:")
-    print(fit)
+    fit_L0 = sm.sampling(data=q2dat.datadkt_0, iter=1000, chains=4)
+    fit_L1 = sm.sampling(data=q2dat.datadkt_1, iter=1000, chains=4)
+    print("THE FIT FOR LOCALE 0:")
+    print(fit_L0)
+    fit_L0.plot()
+    plt.show()
+
+    print("THE FIT FOR LOCALE 1:")
+    print(fit_L1)
+    fit_L1.plot()
+    plt.show()
 
     # alpha = fit['alpha']
     # beta_A = fit['beta_A']

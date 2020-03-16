@@ -7,6 +7,7 @@
 \usepackage{outlines}
 \usepackage{booktabs}
 \usepackage{mathptmx} % Use Times Font
+\usepackage{subcaption}
 
 \usepackage[pdftex]{graphicx} % Required for including pictures
 \usepackage[pdftex,linkcolor=black,pdfborder={0 0 0}]{hyperref} % Format links for pdf
@@ -53,14 +54,14 @@ pdfauthor = {}
 
 \paragraph{Independent pairs conditioned on \(Z = \{C,G\}\)}
 
-$I = \emptyset$
+\[I = \emptyset\]
 
 \paragraph{Markov equivalent DAG}
 Reverse edges but maintain immoralities, i.e. change \(B\) edges \textit{fig \ref{fig:1.3}}
 
 \begin{figure}[htb]
   \centering
-    \includegraphics[width=\textwidth]{../q1/fig13.png}
+    \includegraphics[width=0.5\textwidth]{../q1/fig13.png}
     \caption{Question 1.3 Markov equivalent DAG}
   \label{fig:1.3}
 \end{figure}
@@ -69,7 +70,7 @@ Reverse edges but maintain immoralities, i.e. change \(B\) edges \textit{fig \re
 Change immoralities. I.e. reverse all edges from \(G\) \textit{fig \ref{fig:1.4}}
 \begin{figure}[htb]
   \centering
-    \includegraphics[width=\textwidth]{../q1/fig14.png}
+    \includegraphics[width=0.5\textwidth]{../q1/fig14.png}
     \caption{Question 1.4 Non-Markov equivalent DAG}
   \label{fig:1.4}
 \end{figure}
@@ -115,15 +116,51 @@ Change immoralities. I.e. reverse all edges from \(G\) \textit{fig \ref{fig:1.4}
     \label{fig:2.2}
   \end{figure}
 
-  \subsection{Two models}
+  \subsection{Two models \textit{fig. \ref{fig:2.3_0}} \ref{fig:2.3_1}}
+  %TODO: Discuss the intercept values being so different
+  Houses in 0 get cheaper with age, which was obfuscated in 2.2. Splitting also reduces noise. The higher certainty in our split models is also reflected by the superior \texttt{lp\_\_}.
+
+  \begin{figure}[htb]
+    \centering
+    \begin{subfigure}[b]{\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{../q23/q23_table_summary_L0.png}
+      \caption{posterior table summary}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{../q23/q23_plot_summary_L0.png}
+      \caption{plot summary}
+    \end{subfigure}
+    \caption{Question 2.3 Locale 0}
+    \label{fig:2.3_0}
+  \end{figure}
+
+  \begin{figure}[htb]
+    \centering
+    \begin{subfigure}[b]{\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{../q23/q23_table_summary_L1.png}
+      \caption{posterior table summary}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{../q23/q23_plot_summary_L1.png}
+      \caption{plot summary}
+    \end{subfigure}
+    \caption{Question 2.3 Locale 1}
+    \label{fig:2.3_1}
+  \end{figure}
 
   \subsection{A compromise model}
+  
 
 \section{VB vs MCMC}
 
 \textit{In fewer than 200 words overall: (i) describe Hamiltonian MCMC, (ii) describe variational inference as done in Stan and (iii) discuss the pros and cons of both approaches. (Any equations or figures do not count towards the word count.}
 
 \section{Hidden Markov models}
-
-\printbibliography
 \end{document}
+\printbibliography

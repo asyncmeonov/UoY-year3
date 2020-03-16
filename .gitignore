@@ -3,3 +3,5 @@ INNS/assessment/report/build/*
 
 MLPG/assessment/report/build/*
 !MLPG/assessment/report/build/report.pdf
+
+MLPG/assessment/*/__pycache__
