@@ -3,52 +3,21 @@
 transitions = {}
 emmisions = {}
 observations = [[]]
-states = ['(0,0)','(0,1)','(1,0)','(1,1)']
-
+# states = ('(0,0)','(0,1)','(0,2)','(0,3)','(1,0)','(1,1)','(1,2)','(1,3)','(2,1)','(2,3)','(3,0)','(3,1)','(3,2)','(3,3)')
+states = ('(0,0)','(0,1)','(1,0)','(1,1)')
 def main():
-    # transitions = np.genfromtxt('transition.txt',names=True, delimiter=' ',encoding='UTF-8',dtype=None)
-    # emissions = np.genfromtxt('emmision.txt',names=True, delimiter=' ',encoding='UTF-8',dtype=None)
-    
-    # for row in range(len(transitions)):
-    #     for col in range(2):
-    #         if col == 0:
-    #             if row > 16:
-    #                 transitions[row][col] = tuple(int(i) for i in transitions[row][col][1:-1].split(','))
-    #         elif col == 1:
-    #             transitions[row][col] = tuple(int(i) for i in transitions[row][col][1:-1].split(','))
-    #     print(transitions[row])
-
-    # observations, states, start_prob, trans_prob, emm_prob, end_state
-
-
-    # with open('q4hmm.txt') as f:
-    #     i = 0
-    #     data = f.readlines()
-    #     for line in data:
-    #         i += 1
-    #         line = line.rstrip().split(' ')
-    #         if i > 2 and i <= 274 :
-    #             # Do Transition
-    #             transitions['From'].append(line[0]) if i <= 18 else transitions['From'].append(tuple_converter(line[0]))
-    #             transitions['To'].append(tuple_converter(line[1]))
-    #             transitions['Prob'].append(float(line[2]))
-    #         elif i >= 277:
-    #             # Do Emmision
-    #             emmisions['State'].append(tuple_converter(line[0]))
-    #             emmisions['Symbol'].append(int(line[1]))
-    #             emmisions['Prob'].append(float(line[2]))
     with open('q4hmm.txt') as f:
         i = 0
         data = f.readlines()
         for line in data:
             i += 1
             line = line.rstrip().split(' ')
-            if i > 2 and i <= 274:
+            if i > 2 and i <= 22:
                 # Do Transition
                 if (line[0] not in transitions.keys()):
                     transitions[line[0]] = {}
                 transitions[line[0]].update({line[1]: float(line[2])})
-            elif i >= 277:
+            elif i >= 25:
                 # Do Emmision
                 if (line[0] not in emmisions.keys()):
                     emmisions[line[0]] = {}
@@ -62,28 +31,31 @@ def main():
                 observations.append([])
             else:
                 observations[-1].append(line)
-        observations.pop()
-    
-    # print(observations)
-    # print(transitions['From'][0])
-    # print(transitions['To'][0])
-    # print(transitions['Prob'][0])
-    # print(emmisions['State'][0])
-    # print(emmisions['Symbol'][0])
-    # print(emmisions['Prob'][0])
 
+    print(transitions)
+    print("="*20)
+    print("-"*20)
+    print("="*20)
+    print(emmisions)
     #print prob for a given state transition
-    #print(transitions['(None,None)'][states[0]])
+    print(sum(transitions['(None,None)'].values()))
 
-    print(forward(observations[0]))
+    # test
+    # test = observations[0]
+    # print(test)
+    # print(test[1:])
+    # print(reversed(test[1:]))
+    # print(reversed(test[1:]+(None,)))
 
+    print(" FORWARD PROBABILITIES ")
+    print_prob(0,len(observations[0]),forward(observations[0]))
+    print(" BACKWARD PROBABILITIES ")
+    print_prob(0,len(observations[0]), backward(observations[0]))
 
-
-
-def forward(obsv):
+def forward(observ):
     forward_prob = []
     h_prev = {}
-    for i, obsv_i in enumerate(obsv):
+    for i, observ_i in enumerate(observ):
         h_c = {}
         for state in states:
             if i == 0:
@@ -91,20 +63,35 @@ def forward(obsv):
                 total_h = transitions['(None,None)'][state]
             else:
                 total_h = sum(h_prev[j] * transitions[j][state] for j in states)
-            h_c[state] = emmisions[state][obsv_i] * total_h
+            h_c[state] = emmisions[state][observ_i] * total_h
         forward_prob.append(h_c)
         h_prev = h_c
-
     return forward_prob
 # uses transition prob and emission prob
 # beta for the last time point is == 1
-def backward(trans_P,emm_P,beta):
-    return trans_P * emm_P * beta
+def backward(obsrv):
+    backward_prob = []
+    h_prev = {}
+    for i, observ_i in enumerate(reversed(obsrv)):
+        h_c = {}
+        for state in states:
+            if i == 0:
+                h_c[state] = 1
+            else:
+                h_c[state] = sum(transitions[state][j] * emmisions[j][observ_i] * h_prev[j] for j in states)
+        backward_prob.insert(0, h_c)
+        h_prev = h_c
+    return backward_prob
 
-# def print_prob(n_seq, length, probabilities):
-#     print("Sequence "+n_seq+", length ":length)
-#     for state in probabilities.keys():
-#         pass
+def print_prob(n_seq, length, probabilities):
+    print("Sequence {0}, length {1}".format(n_seq,length))
+    for state in states:
+        line = state
+        for prob in probabilities: 
+            line += ' {:.3f}'.format(prob[state])
+        print(line)
+
+    
 
 
 
