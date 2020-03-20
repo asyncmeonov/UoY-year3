@@ -56,12 +56,12 @@ pdfauthor = {Y3843100}
   \[(D,F),(H,A),(H,B),(H,C),(H,D),(H,E),(H,F),(H,G)\}\]
 
 \paragraph{Independent pairs conditioned on \(Z = \{C,G\}\)}
-There are no \textit{conditionally} independent pairs yet
+There are no \textit{conditionally} independent pairs, yet
 \[\{(H,A),(H,B),(H,D),(H,E),(H,F)\}\]
 still remain unconditionally independent
 
 \paragraph{Markov equivalent DAG}
-Reverse edges but maintain immoralities, i.e. change \(B\) edges \textit{fig \ref{fig:1.3}}
+Reverse edges but maintain immoralities, i.e. reverse \(B\) edges \textit{fig \ref{fig:1.3}}
 
 \begin{figure}[htb]
   \centering
@@ -71,7 +71,7 @@ Reverse edges but maintain immoralities, i.e. change \(B\) edges \textit{fig \re
 \end{figure}
 
 \paragraph{Non-Markov equivalent DAG}
-Change immoralities. I.e. reverse all edges from \(G\) \textit{fig \ref{fig:1.4}}
+Change immoralities, i.e. reverse all edges from \(G\) \textit{fig \ref{fig:1.4}}
 \begin{figure}[htb]
   \centering
     \includegraphics[width=0.5\textwidth]{../q1/fig14.png}
@@ -83,9 +83,8 @@ Change immoralities. I.e. reverse all edges from \(G\) \textit{fig \ref{fig:1.4}
 %TODO: Offload all data manipulation in the .py files and not in the q2data
 %TODO: Make sure all files embedded the model as a str
   \subsection{A simple model (figs \ref{fig:2.1} and \ref{tab:2.1})}
-  %Say 95 confidence interval compared to the mean is pretty solid. (i.e. the interval is tight around the mean + talk about SD)
-%TODO: Say something about "Explain what steps you have taken to ensure that you have computed reasonable approximations to the true posterior distributions over your parameters." in respect to the plots, conf interval, etc
-  We can state that our estimated posteriors approximate the true distributions as all chains have converged \(\hat{R} = 1\), which is also observed by the beta plots. The preference for MCMC sampling over variational inference was due to the fact that the size of our dataset and the length of this assessment permits the usage of the more computationally intensive method. In addition, the asymptotic correctness of the posterior justifies the larger computational expense \parencite{BleiVI}. Empirical tests show that the STAN default of 1000 iterations (2000 samples) and 4 chains is enough for convergence.
+  The first step in checking if our posterior is in the right direction is assessing if the MCMC has converged. This is the case for this model as \(\hat{R} = 1\), which is also observed by the beta plots. Furthermore the 95\% confidence interval is reasonably tight around the mean, indicating they are good posterior predictions.
+  The preference for MCMC sampling over variational inference was due to the fact that the size of our dataset and the length of this assessment permits the usage of the more computationally intensive method. In addition, the asymptotic correctness of the posterior justifies the larger computational expense \parencite{BleiVI}. Empirical tests show that the STAN default of 1000 iterations (2000 samples) and 4 chains is enough for convergence.
   %This model asserts the assumption that althought the data represents the house prices of two distinct locations, the price formation given Age and Size is the same for the two regions.
 
   \subsection{A less simple model (figs. \ref{fig:2.2} and \ref{tab:2.2})}
@@ -94,8 +93,6 @@ Change immoralities. I.e. reverse all edges from \(G\) \textit{fig \ref{fig:1.4}
   \subsection{Two models (figs. \ref{fig:2.3_0},\ref{fig:2.3_1})}
   %TODO: Discuss the intercept values being so different
   Houses in 0 get cheaper with age, which was obfuscated in 2.2. Splitting also reduces noise. The higher certainty in our split models is also reflected by the superior \texttt{lp\_\_}.
-
-  
 
   \subsection{A compromise model (figs. \ref{tab:2.4}, \ref{fig:2.4} \ref{fig:2.4_bnet})}
   We create a hierarchical model \parencite{MultilevelHM} that has variant slopes, but maintains the intercept across locales \(y_i = \alpha + \beta_{j[i]} x_i + \epsilon_i \) with all \(\epsilon \sim N(0,\sigma^{2})\) \parencite{VaryingAlpha}. With it we are able to capture the Age difference and still share some global knowledge via the intercept.
@@ -110,6 +107,7 @@ VI is faster and can be used on large datasets but specifically for STAN if a Ga
 
 \section{Hidden Markov models}
 %TODO: explain forward and backward prob in EM
+Forward \(\alpha(h_t)\) and backward \(\beta(h_t)\) probabilities are useful when doing the M (and the respectively the obfuscated E) steps when calculating the transition probabilities \(p^{new}(h_{t+1} = i^\prime \mid h_t = i)\) by computing the hidden state marginals \(p(h_t \mid v_{1:T}) = \frac{\alpha(h_t)\beta(h_t)}{\sum_{h^{\prime}_t}\alpha(h_t^\prime)\beta(h_t^\prime)}\) and for the emission probabilities \(p^{new}(v_t = j \mid h_t = i)\) the pairwise marginals \(p(h_t, h_{t+1} \mid v_{1:T}) \propto \alpha(h_t)p(v_{t_1} \mid h_{t+1})p(h_{t+1} \mid h_t)\beta(h_t)\).
 
 \begin{appendices}
   \section{Tables and Plots}
