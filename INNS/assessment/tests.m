@@ -29,21 +29,21 @@
 % 
 %  X = X{:,:};
 %  Y = Y{:,:};
-[Xo, Yo] = sm(X,Y);
 
-function [Xo, Yo] = sm(X,Y)
-    Xo = X;
-    Yo = Y;
-    [Ycount, Yr] = groupcounts(Y);
-    for class = 1:10
-%         [Xcount, Xr] = groupcounts(X);
-        while Ycount(class) < max(Ycount)
-            randRowId = randsample(find(Y == class), 1);
-            dupXRow = X(randRowId,:);
-            Xo = [Xo; dupXRow];
-            dupYRow = Y(randRowId,:);
-            Yo = [Yo; dupYRow];
-            Ycount(class) = Ycount(class) + 1;
-        end
-    end
+for col = 1:3
+    plot(N,t_perf(:,col));
+    hold on
 end
+hold off
+legend("traincgb","traincgf","traincgp");
+
+% plot(N,t_time_old(1,:));
+% hold on
+% plot(N,t_time_old(2,:));
+% plot(N,t_time_old(3,:));
+% plot(N,t_time_old(4,:));
+% legend("trainscg","trainrp","trainlm","trainbr");
+% hold off
+
+
+

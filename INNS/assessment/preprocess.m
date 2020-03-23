@@ -1,9 +1,8 @@
 classdef preprocess
-    %PREPROCESS Summary of this class goes here
-    %   Detailed explanation goes here
+    %PREPROCESS Utiliti functions for data transformation
     
     properties
-        Property1
+      %  void properties
     end
     
     methods(Static)
@@ -16,10 +15,17 @@ classdef preprocess
                 ohY(n,Y(n)) = 1;
             end
         end
+        function [Xr, Yr] = remove_outliers(X,Y)
+            [Xr, rId] = rmoutliers(X);
+            Yr = Y(~rId);
+            
+        end
         function [X] = standardise(X)
+            % maps to 0 mean, unit variance space
             X = mapstd(X);
         end
         function [X] = normalise(X)
+            % maps to [-1;1] space
             X = mapminmax(X);
         end
         function [idX] = feature_importance(X,Y)
@@ -32,13 +38,14 @@ classdef preprocess
             xtickangle(45);
         end
         
-%         find the most occurent class and multiply all others until they
-%         reach him
+
         function [Xo, Yo] = oversample(X,Y)
+            %OVERSAMPLE handle unbalanced data
+            %find the most occurent class and multiply all others until they reach him
             Xo = X;
             Yo = Y;
             [Ycount, Yr] = groupcounts(Y);
-            for class = 1:10
+            for class = 1:numel(unique(Y))
                 while Ycount(class) < max(Ycount)
                     randRowId = randsample(find(Y == class), 1);
                     dupXRow = X(randRowId,:);
@@ -53,11 +60,11 @@ classdef preprocess
         function [Xo, Yo] = scale_to_mean(X,Y)
             %TODO
         end
-        function outputArg = method1(obj,inputArg)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-            outputArg = obj.Property1 + inputArg;
-        end
+%         function outputArg = method1(obj,inputArg)
+%             %METHOD1 Summary of this method goes here
+%             %   Detailed explanation goes here
+%             outputArg = obj.Property1 + inputArg;
+%         end
     end
 end
 

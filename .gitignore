@@ -1,6 +1,8 @@
 INNS/assessment/report/build/*
 !INNS/assessment/report/build/report.pdf
 
+INNS/assessment/figures/testfigs/*
+
 MLPG/assessment/report/build/*
 !MLPG/assessment/report/build/report.pdf
 
