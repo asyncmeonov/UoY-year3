@@ -4,8 +4,6 @@
 % end
 % hold off
 % legend("traincgb","traincgf","traincgp");
-u_thresh = min(test_CE) + 0.01;
-l_thresh = min(test_CE) - 0.01;
-
-find(test_CE > l_thresh & test_CE < u_thresh)
+thresh = min(test_CE) + 0.01;
+min(find(test_CE < thresh))
 

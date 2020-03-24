@@ -1,11 +1,11 @@
 N = repelem([37],500);
-%N = [1:100];
-%N = [10,15,20,25,30,35,40,45,50];
-% N = [1];
+% N = [1:100];
+
+feature_subset_name = 'regularised_no_corr_X';
 
 % t_algorithms = ["trainrp","trainscg","traincgb","traincgf","traincgp","trainoss","traingdx"];
 t_algorithms = ["traincgb"];
-% 
+
 % t_perf = zeros(length(N),length(t_algorithms));
 % t_time = zeros(length(N),length(t_algorithms));
 
@@ -40,9 +40,8 @@ for t = 1:length(t_algorithms)
         end
     end
     
-     feature_subset_name = 'regularised_no_corr_X_NSP';
-     name = strcat(num2str(now),'_',num2str(length(N)),'n_', net.divideFcn,'_', net.trainFcn,'_',net.performFcn,'_',feature_subset_name);
-     saveFigs(name,'fig', N, test_CE, test_conf, best_model, time, false);
+%      name = strcat(num2str(now),'_',num2str(length(N)),'n_', net.divideFcn,'_', net.trainFcn,'_',net.performFcn,'_',feature_subset_name);
+%      saveFigs(name,'fig', N, test_CE, test_conf, best_model, time, false);
 end
 
 function [net,tr, Xtest, Ytest, predY] = train_single_layer(n, Xm, Ym, trainAlgo)
