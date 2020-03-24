@@ -10,7 +10,7 @@ classdef preprocess
             [trainInd,valInd,testInd] = divideblock(length(X), 0.7, 0.15,0.15);
         end
         function [ohY] = one_hot_encode(Y)
-            ohY = zeros(length(Y),10);
+            ohY = zeros(length(Y),length(unique(Y)));
             for n = 1:length(Y)
                 ohY(n,Y(n)) = 1;
             end

@@ -1,4 +1,5 @@
-N = [1,2,3,4,5,10,15,20,25,30,35,40,50,60,70,80,90,100];
+N = repelem([37],500);
+%N = [1:100];
 %N = [10,15,20,25,30,35,40,45,50];
 % N = [1];
 
@@ -11,9 +12,9 @@ t_algorithms = ["traincgb"];
 %1	2	3	4	5	6	7	8       9       10      11  	12  	13  14  15  	16  	17      18      19      20          21
 %LB	AC	FM	UC	DL	DS	DP	ASTV	MSTV	ALTV	MLTV	Width	Min	Max	Nmax	Nzeros	Mode	Mean	Median	Variance	Tendency
 
-Xm = Xo(:,[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,19,20,21]).'; %regularised reduced correlated
+Xm = Xo_NSP(:,[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,19,20,21]).'; %regularised reduced correlated
 
-Ym = preprocess.one_hot_encode(Yo).';
+Ym = preprocess.one_hot_encode(Yo_NSP).';
 test_CE = zeros(1, length(N)); % vector of all the cross-entropy values against the test set
 test_conf = zeros(1, length(N)); % vector of all the fractions of samples missclasified in the test set
 time = zeros(length(N),1); % vector of how long each network took
@@ -28,9 +29,6 @@ for t = 1:length(t_algorithms)
         test_CE(n) = perform(net, Ytest, predY);
         test_conf(n) = confusion(Ytest, predY);
         time(n) = sum(tr.time);
-%         %temp
-%         t_perf(n,t) = test_CE(n);
-%         t_time(n,t) = time(n);
 
         if test_CE(n) < best_model.CE
             best_model.CE = test_CE(n);
@@ -42,11 +40,9 @@ for t = 1:length(t_algorithms)
         end
     end
     
-    
-    
-     feature_subset_name = 'regularised_no_corr_X';
+     feature_subset_name = 'regularised_no_corr_X_NSP';
      name = strcat(num2str(now),'_',num2str(length(N)),'n_', net.divideFcn,'_', net.trainFcn,'_',net.performFcn,'_',feature_subset_name);
-     saveFigs(name,'fig', N, test_CE, test_conf, best_model, time, true);
+     saveFigs(name,'fig', N, test_CE, test_conf, best_model, time, false);
 end
 
 function [net,tr, Xtest, Ytest, predY] = train_single_layer(n, Xm, Ym, trainAlgo)
