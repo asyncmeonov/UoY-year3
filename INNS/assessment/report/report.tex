@@ -7,7 +7,8 @@
 \usepackage{outlines}
 %\usepackage{gentium}
 \usepackage{mathptmx} % Use Times Font
-
+\usepackage{algorithmic}
+\usepackage{booktabs}
 
 \usepackage[pdftex]{graphicx} % Required for including pictures
 \usepackage[pdftex,linkcolor=black,pdfborder={0 0 0}]{hyperref} % Format links for pdf
@@ -17,7 +18,7 @@
 \frenchspacing % No double spacing between sentences
 \linespread{1.2} % Set linespace
 \usepackage[a4paper, margin=2cm]{geometry} %margins
-%\usepackage{parskip}
+\usepackage{subcaption}
 
 \usepackage[all]{nowidow} % Tries to remove widows
 \usepackage[protrusion=true,expansion=true]{microtype} % Improves typography, load after fontpackage is selected
@@ -75,7 +76,7 @@ To do this you might need to:
 \end{outline}
 
 \paragraph{}
-The dataset contains fetal cardiotocograms (CTGs) from 2126 patients \autocite{MLforCardio} each of which has 21 different recorded features (input variables). The CTGs have been annotated by three expert obstetricians creating two categories of classes \autocite{Campos:2000}. One is a 10 tuple with respect to the fetal heart rate FHR patterns and the other is a three tuple regarding fetal state. This gives us two supervised classification problems with respectively 10 and 3 distinct classes. Neural Network architectures that can handle classification problems need to have appropriate activation functions and the ability to specify the targets (outputs) as a finite set of discrete classes. We will discuss \textbf{three} different conceptual models with respect to their ability to be configured for classifying our high dimensional CTG dataset.
+The dataset contains fetal cardiotocograms (CTGs) from 2126 patients each of which has 21 different recorded features (input variables). The CTGs have been annotated by three expert obstetricians creating two categories of classes \autocite{Campos:2000}. One is a 10 tuple with respect to the fetal heart rate FHR patterns and the other is a three tuple regarding fetal state. This gives us two supervised classification problems with respectively 10 and 3 distinct classes. Neural Network architectures that can handle classification problems need to have appropriate activation functions and the ability to specify the targets (outputs) as a finite set of discrete classes. We will discuss \textbf{three} different conceptual models with respect to their ability to be configured for classifying our high dimensional CTG dataset.
 
 \subsubsection{Perceptron}
 The \textit{perceptron} is a basic network structure in which our output class \(y\) is determined by a weighted sum of our inputs \(X\) that is evaluated against some hard limit (threshold or activation function) \(y = H(\sum_{i}^{X} x_i w_i)\). Both the advantages and disadvantages of the perceptron are in its simplicity. On one hand we have intuitive behaviour in the fact that the perceptron finds a line that bipartitions our data space, but on the other we are limited only to linearly separable classes. Furthermore a perceptron can perform only binary classification or at best \textit{one-vs-many}.
@@ -130,23 +131,81 @@ To do this you might need to:
 %Todo: Describe the chosen inputs to (and outputs from) the networks.
 %The total set of inputs has been predefined 
 \paragraph{}
-A crucial observation for our classification problems is to note that classifying biological anomalies is naturally going to mean our classes are unbalanced \textbf{[[insert histogram of classes]]}. This is the case for both the FHR patterns and the fetal state problems. To mitigate this, we use a simple oversampling method that replicates data from our underrepresented cases until they match the most common class. This method does not give us any new knowledge about the problems, but by scaling the data we take a step towards unbiased estimations. We also one-hot encode our classes for use with MATLAB's \texttt{patternnet}.
+A crucial observation for our classification problems is to note that classifying biological anomalies is naturally going to mean our classes are unbalanced. This is the case for both the FHR patterns and the fetal state problems (fig. \ref{fig:ClassHistograms}). To mitigate this, we use a simple oversampling method that replicates data from our underrepresented cases until they match the most common class. This method does not give us any new knowledge about the problems, but by scaling the data we take a step towards unbiased estimations when looking at the misclassification rates. We also one-hot encode our classes for use with MATLAB's \texttt{patternnet}.
+
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/CLASS_HIST.png}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/NSP_HIST.png}
+  \end{subfigure}
+  \caption{class distributions}
+  \label{fig:ClassHistograms}
+\end{figure}
+
 \paragraph{}
-Noise reduction by high frequency noise and FHR spike removal has been done by the original researchers, but plotting the correlation and distributions of the features reveals further preprocessing is required \textbf{[[insert graph of plotmatrix before preproc]]}. Unsurprisingly, we observe the mean, mode and median are highly correlated. We keep only the median as a feature importance analysis (minimum redundancy maximum relevance \textbf{[[cn]]}) reveals that it has the highest predictive capabilities. Subsequently we deal with the skewed distributions and non regularised parameters by looking into normalising the data. An empirical test reviews that \((\mu = 0, \sigma^2 = 1)\) regularisation surpasses \([-1;1]\) normalisation performance.
+Noise reduction by high frequency noise and FHR spike removal has been done by the original researchers, but plotting the correlation and distributions of the features reveals further preprocessing is required \ref{fig:plotmatrixX}. Unsurprisingly, we observe the mean, mode and median are highly correlated. We keep only the median as a feature importance analysis (pairwise comparison of the mutual information of each feature and the class \(I(\boldsymbol{X},Y)\) in search of redundancy \autocite{FeatureImportance}) reveals that it has the highest predictive capabilities. It is important to note that the analysis (fig \textbf{insert feature importance fig}) also confirms that the features with highest predictive capabilities are the variance of the CTGs, tendency and the ones related to heart rate accelerations and decelerations. Subsequently we deal with the skewed distributions and non regularised parameters by looking into normalising the data. An empirical test reviews that \((\mu = 0, \sigma^2 = 1)\) regularisation surpasses \([-1;1]\) normalisation performance.
+
+\begin{figure}[htb]{0.48\textwidth}
+  \centering
+    \centering
+    \includegraphics[width=\textwidth]{figures/plotmatrix_X.png}
+  \label{fig:plotmatrixX}
+\end{figure}
 
 \paragraph{what you need to run this NN}
-We disregard training algorithms that compute the Jacobian as they require the network to use a mean-squared error \textit{MSE} loss function, which is not appropriate for our tasks (elaboration on choice of loss functions can be found in section \ref{sec:results}). An empirical comparison of different training algorithms for a network with a single hidden layer with \(N = \{10,15,20,25,30,35,40,45,50\}\) neurons can be seen in figures \textbf{insert comparison CE} and \textbf{insert comparison time}. It appears that the family of conjugate gradient backpropagation \textit{CGB} (traincgb, traincgp and traincgf) achieve the best trade-off between performance and training time. At a glance, the results of CGB with Powell-Beale restarts (traincgb) appears to be the most consistent (least noisy) and therefore we will chose it as a training algorithm. The weights and biases for traincgb are selected via a Nguyen-Widrow \autocite{NetParamInit} algorithm, which evenly distributes the weights and biases for the active regions across neurons at initialisation. CGB also does not use a fixed learning rate, but calculates the learning step at each iteration. All the initialisation parameters can be seen in figure \textbf{insert init param figure}.
+We disregard training algorithms that compute the Jacobian as they require the network to use a mean-squared error \textit{MSE} loss function, which is not appropriate for our tasks (elaboration on choice of loss functions can be found in section \ref{sec:results}). An empirical comparison of different training algorithms for a network with a single hidden layer with \(N = \{10,15,20,25,30,35,40,45,50\}\) neurons can be seen in figure \ref{fig:algoCompare}. It appears that the family of conjugate gradient backpropagation \textit{CGB} (traincgb, traincgp and traincgf) achieve the best trade-off between performance and training time. At a glance, the results of CGB with Powell-Beale restarts (traincgb) appears to be the most consistent (least noisy) and therefore we will chose it as a training algorithm. The initialisation parameters for traincgb are selected via a Nguyen-Widrow \autocite{NetParamInit} algorithm, which evenly distributes the weights and biases for the active regions across neurons. CGB also does not use a fixed learning rate, but calculates the learning step at each iteration. All the initialisation parameters can be seen in table \ref{tab:InitParams}.
 
 % preprocessing, zero mean and unit variance regularisation for features, one hot encoding for labels and oversampling for both
 % activation functions tansigmoid
 % training algorithm
 % learning rate, initialisation weights
 % dataset split, function and ratios
-% 
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/traininng_algo_comparison_CE.png}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/traininng_algo_comparison_time.png}
+  \end{subfigure}
+  \caption{CE loss and training time for different training algorithms}
+  \label{fig:algoCompare}
+\end{figure}
+
+\begin{table}[]
+  \begin{tabular}{@{}llllllllllll@{}}
+  \toprule
+  max epochs & loss goal & min gradient & line search f(x)     & \alpha & \beta & \delta & \gamma & min step & max step &  &  \\ \midrule
+  1000       & 0         & 1e-10        & Charalambous' method \autocite{143326} & 0.001 & 0.1  & 0.001 & 0.1   & 1e-06    & 100      &  &  \\ \bottomrule
+  \end{tabular}
+  \caption{Initialisation parameters for CGB}
+  \label{tab:InitParams}
+\end{table}
 
 \paragraph{how did we end up with this architecture}
-Our output layers have 10 and 3 neurons respectively as we have one-hot encoded the class representation.
-Empirical comparisons were done by starting off with a single hidden layer network and incrementally add neurons to it. This was done independently for both classification problems. 
+%input layer
+The input layer for both problems consisted of the reduced feature set (excluding correlated) for a total of 19 neurons.
+%hidden layer
+Achieving the optimal trade-off between network complexity and performance was done by incrementally evolving the MLP structure for both problems independently. Each network was ran with one hidden layer with \(1,\dots, 100\) neurons and was evaluated against the misclassification rate and the loss function. To reduce the potential of overfitting, we find the model with the least neurons that is within a threshold of the best model: 
+
+\begin{algorithmic}
+  \STATE $best\_model \gets find(min(all\_models.loss))$
+  \STATE $threshold \gets best\_model.loss + 0.01$
+  \STATE $rc\_model \gets min(find(all\_models.loss < threshold))$
+\end{algorithmic}
+
+The threshold value of 1\% is chosen heuristically. No experimentation with additional hidden layers was conducted due to the acceptable performance of a single hidden layer network and the concern of overfitting. Discussion of the performance can be seen in the results section \ref{sec:results}.
+%output layer
+Our output layers have 10 and 3 neurons respectively for the two problems due to our one-hot encoding of the classes.
 
 
 
@@ -159,9 +218,6 @@ Empirical comparisons were done by starting off with a single hidden layer netwo
 % > Skewed distributions handling and outliers --> mean centred normalisation and 
 % > 
 % > Important features assessment. PCA ?
-
-
-
 
 \section{[20 marks] Results and evaluation}
 \label{sec:results}
@@ -179,10 +235,78 @@ To do this you might need to:
 \end{outline}
 
 \paragraph{}
-All models have been trained with a cross-validation with a ratio \textbf{[[train,test,validation]]} respectively for the train, test and validation datasets. All metrics listed here are against the test set as it is the only truly unbiased estimator as the validation set is used to tune the hyperparameters of our network \textbf{[[cn]]}.
+All models have been trained with a cross-validation with a ratio \(\{0.7, 0.15,0.15\}\) respectively for the train, test and validation datasets. All metrics are obtained against the test set as it is the only truly unbiased estimator \autocite[p222]{hastie2009elements}. As each datapoint is from a separate patient \autocite{MLforCardio}, we randomly assign single entries to the three sets as opposed to doing block randomisation.
 
-In regards to loss functions, as the decision space for a classification differs from that of a regression problem, we need to be wary of the usefulness of the MSE. \textbf{elaborate on why MSE is bad} .Due to that fact we have chosen \(crossentropy = -\frac{1}{N}\sum_{i=1}^N\sum_{j=1}^C(T_{i,j}log(X_{i,j})+(1 - T_{i,j})log(1-X_{i,j}))\) as our metric as it penalises neuron output dependent on how incorrect the prediction is. CE is shown to lead to better multinomial classification models compared to MSE \autocite{Golik2013CrossentropyVS}. A prerequisite to use it is the output neurons to have a softmax/sigmoidal activation function, which we conveniently have.
+\paragraph{}
+In regards to loss functions, as the decision space for a classification differs from that of a regression problem, we need to be wary of the usefulness of the MSE. We have chosen \(crossentropy = -\frac{1}{N}\sum_{i=1}^N\sum_{j=1}^C(T_{i,j}log(X_{i,j})+(1 - T_{i,j})log(1-X_{i,j}))\) as our metric as it penalises neuron output proportionally on how incorrect the prediction is. CE is shown to lead to better multinomial classification models compared to MSE \autocite{Golik2013CrossentropyVS}. A prerequisite to use it is the output neurons to have a softmax/sigmoidal activation function, which we conveniently have. We use cross-entropy predominantly as a model evaluation tool. To complement it with a metric that reflects our context, we also use the misclassification rates against the test set.
 
+\paragraph{Model evaluation: FHR patterns (fig \ref{fig:CLASS_HIST})}
+To mitigate the possibility of good results purely due to chance, an experiment was conducted where the selected model was trained and evaluated 500 times. The model with the CE loss closest to the sample average was taken as a representative of our predictive capabilities. As can be seen from the error histogram \ref{fig:CLASS_AVG}, the model is consistent in his predictions with the error being fairly tightly centred around the zero-error margin. Our model achieves high predictive rates of above 85\% for all FHR patterns. The model seems to most often confuse the calm or REM states of sleep. This is potentially due to the fact that they were the predominant classes before we oversampled the data. A closer look reveals that the calm sleep state is most often confused with the calm vigilance or the suspect patterns. It can be argued that for this medical task false positives of the suspect pattern are permissible as that would just implore further investigation. Following from this, it is good that the suspect pattern has more false positives (13.8\%) compared to false negatives (6.9\%). An interesting observation is that half of the false negatives mislabel the suspect as a pathological condition, which also will implore further investigation. Although the oversampling has not miraculously created new informative data entries, the contextualisation of the error assures us that this model could be useful when assessing FHR patterns.
+
+\paragraph{Model evaluation: fetal state NSP (fig \ref{fig:NSP_HIST})}
+We repeat the experiment detailed in the previous paragraph in order to obtain a consistent average model for the fetal state prediction task. Similarly we observe that the error distribution is satisfactory centred around the zero-error margin (\ref{fig:NSP_AVG}). Similarly to the previous problem, not classifying a suspect or a pathological case is worse than confusing a normal case for one of the two. Due to this, we will focus on the upper half of the confusion matrix. In general the model classifies pretty accurately with the greatest errors being when it misclassifies a normal case as a problematic one (either suspect or pathological). The more alarming thing is that the model reports 9 out of 270 (3.3\%)  suspects are classified as normal, which although globally low (1.2\%) would still mean that suspects would go undetected. The pathological case which is arguably the most dangerous to go undetected has no cases misclassified as normal which even with the synthetic oversampling has to be taken with a grain of salt. We can observe that there is a fairly symmetric relationship between the normal being misclassified as a pathological and vice versa (1 case out 265 and 0 cases out of 210). Therefore although we cannot conclude with certainty that there is a clear boundary between the pathological and normal, our model is able to convincingly discriminate between them, which is an important property considering the task.
+
+
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/CLASS/ce_hist_500.png}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/CLASS/misclassification_hist_500.png}
+  \end{subfigure}
+  \caption{CE and Error rate for the FHR pattern network}
+  \label{fig:CLASS_HIST}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/CLASS/avg_conf_matrix.png}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/CLASS/avg_err_hist.png}
+  \end{subfigure}
+  \caption{Performance of the average FHR pattern model}
+  \label{fig:CLASS_AVG}
+\end{figure}
+
+
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/NSP/ce_histogram_500.png}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/NSP/misclasified_histogram_500.png}
+  \end{subfigure}
+  \caption{CE and Error rate for the NSP network}
+  \label{fig:NSP_HIST}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/NSP/avg_conf_matrix.png}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[b]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/NSP/avg_err_hist.png}
+  \end{subfigure}
+  \caption{Performance of the average NSP model}
+  \label{fig:NSP_AVG}
+\end{figure}
 
 
 \section{[20 marks] Further application}
@@ -194,5 +318,7 @@ In the previous sections you used a neural network to convert cardiotocogram fea
   \1 use of data for training
   \1 evaluation of the network
 \end{outline}
+
+%TODO: Read up on Convolutional neural networks
 
 \end{document}

@@ -30,7 +30,7 @@ classdef preprocess
         end
         function [idX] = feature_importance(X,Y)
             [idX, scores] = fscmrmr(X,Y); %can be used under R2019b but not a
-            bar(scores(idx));
+            bar(scores(idX));
             xlabel('Predictor rank');
             ylabel('Predictor importance');
             xticks([1:1:length(idX)]);

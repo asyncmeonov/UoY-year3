@@ -1,7 +1,7 @@
-N = repelem([37],500);
+N = repelem([46],500);
 % N = [1:100];
 
-feature_subset_name = 'regularised_no_corr_X';
+feature_subset_name = 'regularised_median_acc_only_X_NSP';
 
 % t_algorithms = ["trainrp","trainscg","traincgb","traincgf","traincgp","trainoss","traingdx"];
 t_algorithms = ["traincgb"];
@@ -11,14 +11,18 @@ t_algorithms = ["traincgb"];
 
 %1	2	3	4	5	6	7	8       9       10      11  	12  	13  14  15  	16  	17      18      19      20          21
 %LB	AC	FM	UC	DL	DS	DP	ASTV	MSTV	ALTV	MLTV	Width	Min	Max	Nmax	Nzeros	Mode	Mean	Median	Variance	Tendency
+%   X           X       X   X                                                                                       X           X
 
-Xm = Xo_NSP(:,[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,19,20,21]).'; %regularised reduced correlated
+% Xm = Xo_NSP(:,[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,19,20,21]).'; %regularised reduced correlated
+% Xm = Xo(:,[2,5,7,8,20,21]).'; %regularised reduced to top 6 mutual info (above 20 percent)
+Xm = Xo_NSP(:,[1,2,8,9,10,11,12,13,14,15,16,19,20,21]).'; %regularised reduced correlated
 
 Ym = preprocess.one_hot_encode(Yo_NSP).';
 test_CE = zeros(1, length(N)); % vector of all the cross-entropy values against the test set
 test_conf = zeros(1, length(N)); % vector of all the fractions of samples missclasified in the test set
 time = zeros(length(N),1); % vector of how long each network took
 best_model = struct('neur', NaN, 'CE', Inf, 'net', NaN, 'Y', NaN, 'predY', NaN, 'tr', NaN);
+avg_model = struct('neur', NaN, 'CE', Inf, 'net', NaN, 'Y', NaN, 'predY', NaN, 'tr', NaN);
 
 %single hidden layer
 for t = 1:length(t_algorithms)
@@ -39,9 +43,17 @@ for t = 1:length(t_algorithms)
             best_model.tr = tr;
         end
     end
-    
-%      name = strcat(num2str(now),'_',num2str(length(N)),'n_', net.divideFcn,'_', net.trainFcn,'_',net.performFcn,'_',feature_subset_name);
-%      saveFigs(name,'fig', N, test_CE, test_conf, best_model, time, false);
+    dist = abs(test_CE - mean(test_CE));
+    minDist = min(dist);
+    idx = find(dist == minDist);
+    avg_model.CE = test_CE(idx);
+    avg_model.net = net;
+    avg_model.Y = Ytest;
+    avg_model.predY = predY;
+    avg_model.neur = N(idx);
+    avg_model.tr = tr;
+    name = strcat(num2str(now),'_',num2str(length(N)),'n_', net.divideFcn,'_', net.trainFcn,'_',net.performFcn,'_',feature_subset_name);
+    saveFigs(name,'fig', N, test_CE, test_conf, best_model, avg_model, time, true);
 end
 
 function [net,tr, Xtest, Ytest, predY] = train_single_layer(n, Xm, Ym, trainAlgo)
@@ -62,7 +74,7 @@ function [net,tr, Xtest, Ytest, predY] = train_single_layer(n, Xm, Ym, trainAlgo
     predY = net(Xtest);  
 end
 
-function saveFigs(nameX, filetype, N, test_CE, test_conf, best_model, time, isTest)
+function saveFigs(nameX, filetype, N, test_CE, test_conf, best_model, avg_model ,time, isTest)
   if isTest
     path = strcat('figures\testfigs\',nameX);
   else
@@ -89,10 +101,21 @@ function saveFigs(nameX, filetype, N, test_CE, test_conf, best_model, time, isTe
   plotconfusion(best_model.Y, best_model.predY);
   saveas(gcf,fullfile(path, 'best_conf_matrix'), filetype);
   
+  figure('Name', 'Average model Error Histogram')
+  ploterrhist(avg_model.Y - avg_model.predY);
+  saveas(gcf,fullfile(path, 'avg_err_hist'), filetype);
+
+  figure('Name', 'Average model Conf Matrix')
+  plotconfusion(avg_model.Y, avg_model.predY);
+  saveas(gcf,fullfile(path, 'avg_conf_matrix'), filetype);
+  
   jframe = view(best_model.net);
   saveJframe(jframe, fullfile(path, 'best_architecture'));
   
   save(fullfile(path,'best_model'), 'best_model');
+  save(fullfile(path,'avg_model'), 'avg_model');
+  save(fullfile(path,'test_CE'), 'test_CE');
+  save(fullfile(path,'test_conf'), 'test_conf');
   close all
 end
 
