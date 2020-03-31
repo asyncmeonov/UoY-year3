@@ -1,3 +1,0 @@
-$pdflatex="pdflatex -synctex=1 -halt-on-error -interaction=nonstopmode %O %S 1> build/error.log || cat build/error.log";
-$out_dir='build';
-
