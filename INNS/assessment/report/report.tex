@@ -21,6 +21,8 @@
 \usepackage[a4paper, margin=2cm]{geometry} %margins
 \usepackage{subcaption}
 
+\setlength{\abovecaptionskip}{2pt plus 3pt minus 2pt}
+\setlength{\belowcaptionskip}{0pt plus 3pt minus 2pt} 
 \usepackage[all]{nowidow} % Tries to remove widows
 \usepackage[protrusion=true,expansion=true]{microtype} % Improves typography, load after fontpackage is selected
 \usepackage{csquotes}
@@ -39,8 +41,7 @@ pdfauthor = {}
 \title{INNS COM00029H Open Assessment}
 
 \author{Y3843100}
-
-\date{\today}
+\date{\vspace{-5ex}}
 %-----------------------
 % Begin document
 %-----------------------
@@ -60,85 +61,44 @@ pdfauthor = {}
 
 \section{[20 marks] Discussion of architectures.}
 \label{sec:discussion}
-This section should:
-\begin{outline}
-  \1 describe (briefly) the data you have, and how much there is of it.
-  \1 identify the type of problem
-  \1 identify which classes of architectures would be suitable
-  \1 give a brief discussion of the technical features of the architectures, and the advantages and disadvantages of each
-  \1 state which class of architecture you are going to use and justify your choice, relating the characteristics of the problem to the advantages/disadvantages of the architecture.
-\end{outline}
-
-To do this you might need to:
-\begin{outline}
-  \1 do some preliminary experiments with simple versions of the architecture to get a feel for what will work
-  \1 do some exploratory data analysis to see what the characteristics of the data are
-  \1 consider the principles involved and relate them to the problem.
-\end{outline}
-
 \paragraph{}
-The dataset contains fetal cardiotocograms (CTGs) from 2126 patients each of which has 21 different recorded features (input variables). The CTGs have been annotated by three expert obstetricians creating two categories of classes \autocite{Campos:2000}. One is a 10 tuple with respect to the fetal heart rate FHR patterns and the other is a three tuple regarding fetal state. This gives us two supervised classification problems with respectively 10 and 3 distinct classes. Neural Network architectures that can handle classification problems need to have appropriate activation functions and the ability to specify the targets (outputs) as a finite set of discrete classes. We will discuss \textbf{three} different conceptual models with respect to their ability to be configured for classifying our high dimensional CTG dataset.
+The dataset contains fetal cardiotocograms (CTGs) from 2126 patients each of which has 21 different recorded features (input variables). The CTGs have been annotated by three expert obstetricians creating two categories of classes \autocite{Campos:2000}. One is a 10 tuple with respect to the fetal heart rate FHR patterns and the other is a three tuple regarding fetal state. This gives us two supervised classification problems with respectively 10 and 3 distinct classes. Neural Network architectures that can handle classification problems need to have appropriate activation functions and the ability to specify the targets (outputs) as a finite set of discrete classes. We will discuss four different conceptual models with respect to their ability to be configured for classifying our CTG dataset.
 
-\subsubsection{Perceptron}
-The \textit{perceptron} is a basic network structure in which our output class \(y\) is determined by a weighted sum of our inputs \(X\) that is evaluated against some hard limit (threshold or activation function) \(y = H(\sum_{i}^{X} x_i w_i)\). Both the advantages and disadvantages of the perceptron are in its simplicity. On one hand we have intuitive behaviour in the fact that the perceptron finds a line that bipartitions our data space, but on the other we are limited only to linearly separable classes. Furthermore a perceptron can perform only binary classification or at best \textit{one-vs-many}.
+\subsection{Perceptron}
+The \textit{perceptron} is a basic network structure in which our output class \(y\) is determined by a weighted sum of our inputs \(X\) that is evaluated against some hard limit (threshold or activation function) \(y = H(\sum_{i}^{X} x_i w_i)\). Both the advantages and disadvantages of the perceptron are in its simplicity. On one hand we have intuitive behaviour in the fact that the perceptron finds a line that bipartitions our data space, but on the other we are limited only to linearly separable classes. That limits us to only binary classification or at best \textit{one-vs-many}.
 
-\subsubsection{Multi-Layer Perceptron MLP networks}
-The shortcomings of the single perceptron are addressed by its orchestrated counterpart, the multi-layer perceptron \textit{MLP}. The three main differences as highlighted by Haykin \autocite{Haykin1998} are:
-
-\begin{outline}
-  \1 neuron activation functions are differentiable (sigmoid functions are often chosen), unlike the hard limits we had before
-  \1 between our input and output layers we construct one or more \textit{hidden layers} containing one or more neurons
-  \1 the input, output and hidden neurons are highly connected
-\end{outline}
-
-% ? Argument about we cannot add more datapoints therefore we will have to find the best network.
-By composing neurons together we can learn more complex patterns at the expense of more complicated learning rules. The benefit of MLPs is that that they can approximate virtually any function provided there is enough data. The disadvantages of using MLPs come from the fact that they are prone to overfitting on high dimensional data and they do not necessarily have a simple intuitive meaning as the perceptron classifier. We can theoretically use MLPs for our two classification problems as we can specify the number of output neurons to be three and ten respectively. An issue arrises with what network structure would be viable to capture the properties of our high dimensional data. 
+\subsection{Multi-Layer Perceptron MLP networks}
+The shortcomings of the single perceptron are addressed by its orchestrated counterpart, the multi-layer perceptron \textit{MLP}. The three main differences as highlighted by Haykin \autocite{Haykin1998} are: neuron activation functions are differentiable (sigmoid functions are often chosen), unlike the hard limits we had before; between our input and output layers we construct one or more \textit{hidden layers} containing one or more neurons; the input, output and hidden neurons are highly connected.
+By composing neurons together we can learn more complex patterns at the expense of more complicated learning rules. The benefit of MLPs is that that they can approximate virtually any function provided there is enough data. The disadvantages of using MLPs come from the fact that they are prone to overfitting on data and they do not necessarily have a simple intuitive meaning as the perceptron classifier. We can theoretically use MLPs for our two classification problems as we can specify the number of output neurons to be three and ten respectively. The current task limits us to only use the data provided and we cannot acquire arbitrarily many new datapoints which rises the issue of what network structure would be viable to capture the properties of our limited dataset.
 
 %Due to the continuous activation function, neurons in MLPs are able to propagate their weights forward in the network and influence subsequent neurons. Because we have a supervised problem, we can define the notion of error \(e\) as the difference between the true classes \(d\) and our network's outputs. The error at each neuron is \(E = \frac{1}{2}e^{2}\). Training the MLP is a matter of minimising the error with respect to the weights which is often done by a gradient descent algorithm. An issue arrises with the fact that the error is known only at the output layer. To correctly adjust the weights on each neuron, we use a backpropagation method to communicate how weight changes affect the error. Knowing the mechanisms involved in using MLPs we can determine two issues: what network structure is viable for our problems and how can we learn the weights of each neuron now that they are connected?
 
-\subsubsection{Radial Basis Function RBF networks}
+\subsection{Radial Basis Function RBF networks}
 RBF networks are a single hidden layer MLP where Euclidean distance between the inputs and some point in space associated with the neuron's centre is computed instead of linear activation function. More specifically, the hidden layers calculate a radially-symmetric function (usually a Gaussian) from the inputs \(f_i(x) = \exp \left(-\frac{{\mid x - c_i \mid}^2}{2 \sigma^2} \right) \) where \(c_i\) is the centre for neuron \(i\). The outputs are the weighted sums of the different basis functions in the hidden layer.
 RBF networks classify new data points by associating them to the closest \(c_i\). The benefit of this architecture is that it is often faster to train compared to MLPs, but a substantial drawback is that they struggle with generalising outside of the margins of the training data. But an argument can be made that for our specific task, if we get new patient data that has low response for all of our current classes, that is a potential indicator of an anomaly that would require further investigation.
 
 \subsection{Deep Learning: Convolutional Neural Networks CNN}
 \label{sec:CNN}
-A Deep Learning Neural Network DLNN is in essence a MLP with more than 2 hidden layers. The architectural space of DLNNs is exponentially larger than that of the shallow MLPs and one of their main advantages is that they can compactly represent a wider range of functions. Examples can include but are not limited to modelling seqeunced data with recurrent neural networks, doing complex clustering (unsupervised classification) with autoencoders, automatically improving accuracy to previously solved problems with semi-supervised adversarial neural networks and doing complicated pattern recognition with convolutional neural networks CNNs. As our problems are indeed pattern recognition tasks, we will focus on CNNS. As the data we have is collected from different patients, some common patterns might appear in different locations of our data space. If that is the case, regular MLPs would potentially struggle to discern the same pattern between different patients. CNNs' structure solve this problem by learning space invariant features, meaning that no matter where the pattern has manifested, the CNN will be able to learn from it. A substantial drawback of CNNs and other DLNNs is that their performance is highly dependent on the availability of data, which in our case of 2126 datapoints might be problematic.
+A Deep Learning Neural Network DLNN is in essence a MLP with more than 2 hidden layers. The architectural space of DLNNs is exponentially larger than that of the shallow MLPs and one of their main advantages is that they can compactly represent a wider range of functions. Examples can include but are not limited to modelling sequenced data with recurrent neural networks, doing complex clustering (unsupervised classification) with autoencoders, automatically improving accuracy to previously solved problems with semi-supervised adversarial neural networks and doing complicated pattern recognition with convolutional neural networks CNNs. As our problems are indeed pattern recognition tasks, we will focus on CNNs. CNNs operate best on raw, unformatted feature spaces in which they learn kernel functions to discern different features of the data. The main advantage is that the features learned are space invariant, meaning that they are considered equally likely no matter where in the feature space they manifest. As the data we have is collected from different patients, some common patterns might appear in different locations. If that is the case, regular MLPs would potentially struggle to discern the same pattern between different patients. A substantial drawback of CNNs and other DLNNs is that their performance is highly dependent on the availability of data. Our case of 2126 datapoints is too small to get a convincing interpretation of the results afterwards if we use a DLNN.
 
 \paragraph{}
 In the choice of an architecture it is important to look at the data itself. Our data does not appear to be linearly separable and our task is to discriminate between all the distinct classes, therefore we rule out the perceptron as a viable architecture.
-MLP and RBF are theoretically viable for both of our classification problems. They both allow for supervised multiclass classification problems and they can solve non-linearly separable problems. For the sake of simplicity and focusing on other parts of the model, we assert that the low response property of the RBF network as a useful indicator for anomalies is not appropriate for our task. We would like to create a model that generalises to similar structures even if they have never been observed. Utilising a CNN for that would also incur concerns over overfitting due to lack of data and therefore we will not be considering them.
+MLP and RBF are theoretically viable for both of our classification problems. They both allow for supervised multiclass classification problems and they can solve non-linearly separable problems. For the sake of simplicity and focusing on other parts of the model, we assert that the low response property of the RBF network as a useful indicator for anomalies is not appropriate for our task. We would like to create a model that generalises to similar structures even if they have never been observed. As mentioned in section \ref{sec:CNN},utilising a CNN for that would also incur concerns over overfitting due to lack of data. Furthermore if the data we had was raw, high dimensional scans and not summarised features as it is now, we would have been able to benefit from the space invariance. In the current form of the data, this architectural complexity is not justifiable and therefore we will not be considering CNNs.
 The severity of the disadvantages for MLP models can be lessened by paying close attention to the meaning of the data and incrementally explore different network structures, applying Occam's razor as a prerequisite. Because of this reasoning, we will empirically compare different MLP networks for our two classification problems.
 
 \section{[40 marks] Creation and application of neural networks.}
 \label{sec:creation}
-This section should
-\begin{outline}
-  \1 Describe the chosen inputs to (and outputs from) the networks.
-  \1 Describe how the data you started with have been preprocessed.
-  \1 Give sufficient detail for someone else to process a new batch of data for use with the final trained network.
-  \1 State which training algorithm you selected, and explain how you selected that training algorithm. For this training algorithm, give sufficient detail to enable someone to use the same training algorithm in exactly the same way. This does NOT mean (for example) describing gradient descent in great detail. It DOES mean giving any parameters, initialisation, etc, even if they are the toolbox defaults.
-  \1 Explain the process you went through in making the selection of the final architecture, for example, the number of neurons or the number of layers to use.
-\end{outline}
-
-To do this you might need to:
-\begin{outline}
-  \1 Test of one or more networks to demonstrate the effect of different preprocessing choices on the performance of the network.
-  \1 Try different training algorithms on one or more networks to compare performance.
-  \1 Evaluate a number of networks, and record details of their structures and how they performed. You may summarise repeated tests of the same structure. 
-\end{outline}
-%Todo: Describe the chosen inputs to (and outputs from) the networks.
-%The total set of inputs has been predefined 
 \paragraph{}
 A crucial observation for our classification problems is to note that classifying biological anomalies is naturally going to mean our classes are unbalanced. This is the case for both the FHR patterns and the fetal state problems (fig. \ref{fig:ClassHistograms}). To alleviate this, we use a simple oversampling method. Specifically we randomly select underrepresented cases and replicate them until they match the most common class. This method does not give us any new knowledge about the problems, but by scaling the data we take a step towards unbiased estimations when looking at the misclassification rates. Furthermore we one-hot encode our class labels for use with MATLAB's \texttt{patternnet}.
 
 \begin{figure}[htb]
   \centering
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/CLASS_HIST.png}
   \end{subfigure}
   ~
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/NSP_HIST.png}
   \end{subfigure}
@@ -147,22 +107,22 @@ A crucial observation for our classification problems is to note that classifyin
 \end{figure}
 
 \paragraph{}
-Noise reduction by removal of high frequency noise and FHR spikes has been done by the original researchers, but an interaction plot of the features reveals further preprocessing is required \ref{fig:plotmatrixX}. Unsurprisingly, we observe the mean, mode and median are highly correlated.
-To reduce the complexity of the model we will keep only one. The choice between the three statistics is done via a feature importance analysis (fig. \ref{fig:FI}). We do a pairwise comparison of the mutual information of each feature and the classes of the two problems \(I(\boldsymbol{X},\boldsymbol{Y})\) in search of redundancy \autocite{FeatureImportance}. The comparison reveals that the median and mean respectively for the FHR and NSP tasks have the highest predictive capabilities. Additionally, it is unsurprising to note that the features with highest predictive capabilities are the variance of the CTGs, tendency and the ones related to heart rate accelerations and decelerations. Subsequently we deal with the skewed distributions and non regularised parameters by looking into normalising the data. An empirical test reviews that \((\mu = 0, \sigma^2 = 1)\) regularisation surpasses \([-1;1]\) normalisation performance. Moreover, the regularisation reveals that the FHR change parameters \(\{AC,FM,UC,DL,DS,DP\}\) are also highly correlated (fig \ref{fig:plotmatrixStandardisedX} features 2-7). In a bid to reduce the complexity of the model, we repeat the process we did for choosing the statistics features. The final feature subsets used for the two models are as follows:
+Noise reduction by removal of high frequency noise and FHR spikes has been done by the original researchers, but an interaction plot of the features reveals further preprocessing is required \ref{fig:plotmatrixX}. We observe the mean, mode and median are highly correlated.
+To reduce the complexity of the model we will keep only one. The choice between the three statistics is done via a feature importance analysis (fig. \ref{fig:FI}). A pairwise comparison of the mutual information of each feature and the classes of the two problems \(I(\boldsymbol{X},\boldsymbol{Y})\) in search of redundancy \autocite{FeatureImportance} is conducted. The comparison reveals that the median and mean respectively for the FHR and NSP tasks have the highest predictive capabilities. It is unsurprising to note that the features with highest predictive capabilities are the variance, tendency and the ones related to heart rate accelerations and decelerations. Subsequently we address the skewed distributions and non regularised parameters by looking into normalising the data. An empirical test reviews that \((\mu = 0, \sigma^2 = 1)\) regularisation surpasses \([-1;1]\) normalisation performance. Moreover, the regularisation reveals that the FHR change parameters \(\{AC,FM,UC,DL,DS,DP\}\) are also highly correlated (fig \ref{fig:plotmatrixStandardisedX} features 2-7). In a bid to reduce complexity, we repeat the process we did for choosing the statistics features. The final 14 tuple feature subsets used for the two models are as follows:
 \begin{outline}
-  \1 FHR: 14 input features \{LB, AC, ASTV, MSTV, ALTV,MLTV, Width, Min, Max, Nmax, Nzeros, Median, Var, Tendency\}
-  \1 NSP: 14 input features \{LB, DP, ASTV, MSTV, ALTV,MLTV, Width, Min, Max, Nmax, Nzeros, Mean, Var, Tendency\}
+  \1 FHR: \{LB, AC, ASTV, MSTV, ALTV,MLTV, Width, Min, Max, Nmax, Nzeros, Median, Var, Tendency\}
+  \1 NSP: \{LB, DP, ASTV, MSTV, ALTV,MLTV, Width, Min, Max, Nmax, Nzeros, Mean, Var, Tendency\}
 \end{outline}
 
 \begin{figure}[htb]
   \centering
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/feature_importance.png}
     \caption{FHR}
   \end{subfigure}
   ~
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/feature_importance_NSP.png}
     \caption{NSP}
@@ -173,18 +133,21 @@ To reduce the complexity of the model we will keep only one. The choice between 
 
 \begin{figure}[htb]
   \centering
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
-    \includegraphics[width=0.48\textwidth]{figures/plotmatrix_X.png}
-    \caption{feature interaction matrix}
-  \label{fig:plotmatrixX}
-\end{figure}
-
-\begin{figure}[htb]
+    \includegraphics[width=\textwidth]{figures/plotmatrix_X.png}
+    \caption{original}
+    \label{fig:plotmatrixX}
+  \end{subfigure}
+  ~
   \centering
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
-    \includegraphics[width=0.48\textwidth]{figures/plotmatrix_standardised_X.png}
-    \caption{feature interaction matrix}
-  \label{fig:plotmatrixStandardisedX}
+    \includegraphics[width=\textwidth]{figures/plotmatrix_standardised_X.png}
+    \caption{standardised}
+    \label{fig:plotmatrixStandardisedX}
+  \end{subfigure}
+  \caption{feature interaction matrices}
 \end{figure}
 
 We disregard training algorithms that compute the Jacobian as they require the network to use a mean-squared error \textit{MSE} loss function, which is not appropriate for our tasks (elaboration on choice of loss functions can be found in section \ref{sec:results}). An empirical comparison of different training algorithms for a network with a single hidden layer with \(N = \{10,15,20,25,30,35,40,45,50\}\) neurons can be seen in figure \ref{fig:algoCompare}. It appears that the family of conjugate gradient backpropagation \textit{CGB} (traincgb, traincgp and traincgf) achieve the best trade-off between performance and training time. At a glance, the results of CGB with Powell-Beale restarts (traincgb) appears to be the most consistent (least noisy) and therefore we will chose it as a training algorithm. The initialisation parameters for traincgb are selected via a Nguyen-Widrow \autocite{NetParamInit} algorithm, which evenly distributes the weights and biases for the active regions across neurons. CGB does not use a fixed learning rate, but calculates the learning step at each iteration. All the initialisation parameters can be seen in table \ref{tab:InitParams}.
@@ -196,12 +159,12 @@ We disregard training algorithms that compute the Jacobian as they require the n
 % dataset split, function and ratios
 \begin{figure}[htb]
   \centering
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/traininng_algo_comparison_CE.png}
   \end{subfigure}
   ~
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/traininng_algo_comparison_time.png}
   \end{subfigure}
@@ -210,6 +173,7 @@ We disregard training algorithms that compute the Jacobian as they require the n
 \end{figure}
 
 \begin{table}[]
+  \centering
   \begin{tabular}{@{}llllllllllll@{}}
   \toprule
   max epochs & loss goal & min gradient   & \alpha & \beta & \delta & \gamma & min step & max step & \\ \midrule
@@ -237,12 +201,12 @@ Our output layers have 10 and 3 neurons respectively for the two problems due to
 
 \begin{figure}[htb]
   \centering
-  \begin{subfigure}[b]{0.95\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/delta_ce_class.png}
   \end{subfigure}
   ~
-  \begin{subfigure}[b]{0.95\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/delta_misclass_rate_class.png}
   \end{subfigure}
@@ -252,12 +216,12 @@ Our output layers have 10 and 3 neurons respectively for the two problems due to
 
 \begin{figure}[htb]
   \centering
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/delta_ce_nsp.png}
   \end{subfigure}
   ~
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/delta_misclass_rate_nsp.png}
   \end{subfigure}
@@ -265,49 +229,28 @@ Our output layers have 10 and 3 neurons respectively for the two problems due to
   \label{fig:NSP_performance}
 \end{figure}
 
-%Todo: Describe how the data you started with have been preprocessed.
-% > data is per patient and is temporal. we will use block divide for this
-% > Noise of data -> signal noise reduction has been done beforehand (FHR spike removal and filter of high frequency noise):: median of 8% signal loss
-% > Imbalanced dataset -> plot CLASS hist, we are going to oversample? 
-% > Numerical/Categorical :: all values are numerical and the only category is the Tendency which is already formatted in a usable numeric format
-% > Correlated variables 
-% > Skewed distributions handling and outliers --> mean centred normalisation and 
-% > 
-% > Important features assessment. PCA ?
 
 \section{[20 marks] Results and evaluation}
 \label{sec:results}
-This section should
-\begin{outline}
-  \1 Explain the metric or metrics you have used for comparison between networks.
-  \1 Give a synopsis of the results obtained from the final selected network.
-  \1 Evaluate the results, in relation to the problem posed in the scenario. 
-\end{outline}
-\begin{outline}
-To do this you might need to:
-  \1 Consider different metrics for performance, appropriate to the problem. Remember that a Mean Squared Error (MSE) on its own is not always helpful in judging how well something works.
-  \1 Identify anything of interest in the results, such as areas of particularly good or poor performance, or variation between different training runs.
-  \1 Reflect on the conclusions that you may draw from the results, and whether they are showing that the neural network is useful in this case.
-\end{outline}
 
 \paragraph{}
-In regards to loss functions, as the decision space for a classification differs from that of a regression problem, we need to be wary of the usefulness of the MSE. We have chosen \(crossentropy = -\frac{1}{N}\sum_{i=1}^N\sum_{j=1}^C(T_{i,j}log(X_{i,j})+(1 - T_{i,j})log(1-X_{i,j}))\) as our metric as it penalises neuron output proportionally on how incorrect the prediction is. CE is shown to lead to better multinomial classification models compared to MSE \autocite{Golik2013CrossentropyVS}. A prerequisite to use it is the output neurons to have a softmax/sigmoidal activation function, which we conveniently have. We use cross-entropy predominantly as a model evaluation tool. To complement it with a metric that reflects our context, we also use the misclassification rates against the test set.
+In regards to loss functions, as the decision space for a classification differs from that of a regression problem, we need to be wary of the usefulness of the MSE. We have chosen \(crossentropy = -\frac{1}{N}\sum_{i=1}^N\sum_{j=1}^C(T_{i,j}log(X_{i,j})+(1 - T_{i,j})log(1-X_{i,j}))\) as our metric as it penalises neuron output proportionally on how incorrect the prediction is. CE is shown to lead to better multinomial classification models compared to MSE \autocite{Golik2013CrossentropyVS}. A prerequisite to use it is the output neurons to have a softmax/sigmoidal activation function, which we conveniently have. To complement it with a metric that reflects our context, we also use the misclassification rates against the test set.
 
 \paragraph{Model evaluation: FHR patterns (fig \ref{fig:CLASS_HIST})}
-To mitigate the possibility of good results purely due to chance, an experiment was conducted where the selected model was trained and evaluated 500 times. The model with the CE loss closest to the sample average was taken as a representative of our predictive capabilities. As can be seen from the error histogram \ref{fig:CLASS_AVG}, the model is consistent in his predictions with the error being fairly tightly centred around the zero-error margin. Our model achieves high predictive rates of above 85\% for all FHR patterns. The model seems to most often confuse the calm or REM states of sleep. This is potentially due to the fact that they were the predominant classes before we oversampled the data. A closer look reveals that the calm sleep state is most often confused with the calm vigilance or the suspect patterns. It can be argued that for this medical task false positives of the suspect pattern are permissible as that would just implore further investigation. Following from this, it is good that the suspect pattern has more false positives (13.8\%) compared to false negatives (6.9\%). An interesting observation is that half of the false negatives mislabel the suspect as a pathological condition, which also will implore further investigation. Although the oversampling has not miraculously created new informative data entries, the contextualisation of the error assures us that this model could be useful when assessing FHR patterns.
+To mitigate the possibility of good results purely due to chance, an experiment was conducted where the selected model was independently trained and evaluated 500 times. The model with the CE loss closest to the sample average was taken as a representative of our predictive capabilities. As can be seen from the error histogram \ref{fig:CLASS_AVG}, the model is consistent in his predictions with the error being fairly tightly centred around the zero-error margin. Our model achieves high predictive rates of above 85\% for all FHR patterns. The model seems to most often confuse the calm or REM states of sleep. This is potentially due to the fact that they were the predominant classes before we oversampled the data. A closer look reveals that the calm sleep state is most often confused with the calm vigilance or the suspect patterns. It can be argued that for this medical task false positives of the suspect pattern are permissible as that would just implore further investigation. Following from this, it is good that the suspect pattern has more false positives (13.8\%) compared to false negatives (6.9\%). An interesting observation is that half of the false negatives mislabel the suspect as a pathological condition, which also will implore further investigation. Although the oversampling has not miraculously created new informative data entries, the contextualisation of the error assures us that this model could be useful when assessing FHR patterns.
 
 \paragraph{Model evaluation: fetal state NSP (fig \ref{fig:NSP_HIST})}
-We repeat the experiment detailed in the previous paragraph in order to obtain a consistent average model for the fetal state prediction task. Similarly we observe that the error distribution is satisfactory centred around the zero-error margin (\ref{fig:NSP_AVG}). Similarly to the previous problem, not classifying a suspect or a pathological case is worse than confusing a normal case for one of the two. Due to this, we will focus on the upper half of the confusion matrix. In general the model classifies pretty accurately with the greatest errors being when it misclassifies a normal case as a problematic one (either suspect or pathological). The more alarming thing is that the model reports 9 out of 270 (3.3\%)  suspects are classified as normal, which although globally low (1.2\%) would still mean that suspects would go undetected. The pathological case which is arguably the most dangerous to go undetected has no cases misclassified as normal which even with the synthetic oversampling has to be taken with a grain of salt. We can observe that there is a fairly symmetric relationship between the normal being misclassified as a pathological and vice versa (1 case out 265 and 0 cases out of 210). Therefore although we cannot conclude with certainty that there is a clear boundary between the pathological and normal, our model is able to convincingly discriminate between them, which is an important property considering the task.
+We repeat the experiment detailed in previously and obtain a consistent average model for the fetal state prediction task. We observe that the error distribution is satisfactory centred around the zero-error margin (\ref{fig:NSP_AVG}). Similarly to the previous problem, not classifying a suspect or a pathological case is worse than confusing a normal case for one of the two. Due to this, we will focus on the upper half of the confusion matrix. In general the model classifies pretty accurately with the greatest errors being when it misclassifies a normal case as a problematic one (either suspect or pathological). The more alarming thing is that the model reports 9 out of 270 (3.3\%)  suspects are classified as normal, which although globally low (1.2\%) would still mean that suspects would go undetected. The pathological case (which is arguably the most dangerous to go undetected) has no cases misclassified as normal. Even with the synthetic oversampling, this has to be taken with a grain of salt. We can observe that there is a fairly symmetric relationship between the normal being misclassified as a pathological and vice versa (1 case out 265 and 0 cases out of 210). Therefore although we cannot conclude with certainty that there is a clear boundary between the pathological and normal, our model is able to convincingly discriminate between them.
 
 
 \begin{figure}[htb]
   \centering
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/CLASS/ce_hist_500.png}
   \end{subfigure}
   ~
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/CLASS/misclassification_hist_500.png}
   \end{subfigure}
@@ -317,12 +260,12 @@ We repeat the experiment detailed in the previous paragraph in order to obtain a
 
 \begin{figure}[htb]
   \centering
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/CLASS/avg_conf_matrix.png}
   \end{subfigure}
   ~
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/CLASS/avg_err_hist.png}
   \end{subfigure}
@@ -333,12 +276,12 @@ We repeat the experiment detailed in the previous paragraph in order to obtain a
 
 \begin{figure}[htb]
   \centering
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/NSP/ce_histogram_500.png}
   \end{subfigure}
   ~
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/NSP/misclasified_histogram_500.png}
   \end{subfigure}
@@ -348,12 +291,12 @@ We repeat the experiment detailed in the previous paragraph in order to obtain a
 
 \begin{figure}[htb]
   \centering
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/NSP/avg_conf_matrix.png}
   \end{subfigure}
   ~
-  \begin{subfigure}[b]{0.48\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{figures/NSP/avg_err_hist.png}
   \end{subfigure}
@@ -364,24 +307,17 @@ We repeat the experiment detailed in the previous paragraph in order to obtain a
 
 \section{[20 marks] Further application}
 
-%TODO: Finish this
 \label{sec:further}
-In the previous sections you used a neural network to convert cardiotocogram features into a diagnosis. Another tool for detection and diagnosis of fetal abnormalities is the ultrasound scan, that produces an image of the a section through the fetus. Interpreting fetal scans is a highly complex task which require years of training. Assume the availability of a large number of fetal scan images, both normal and with some abnormality, and labelled to indicate different types of abnormalities. The task is for a neural network to process new ultrasound images, and to indicate which images needed further investigation. This section should discuss the issues you would need to consider in relation to:
-\begin{outline}
-  \1 selection of an architecture
-  \1 construction of the network
-  \1 use of data for training
-  \1 evaluation of the network
-\end{outline}
 
 \paragraph{}
+We will assume we are dealing with standard 2D ultrasounds as opposed to 3D or 3D real-time (4D) scans on the basis that data from 2D ultrasounds is the most common \autocite{doi:10.1002/uog.3933}.
 A problem of high dimensionality such as diagnosis of fetal abnormalities from ultrasound images would benefit from a more complicated DLNN structure.
-Relating back to the discussion of DLNN structures in section \ref{sec:CNN}, CNNs are a good candidate for the complicated task both in terms of potential accuracy and in training time. In terms of interfacing, the inputs of the network are going to be a high number of neurons potentially one for every pixel and the output is going to be either two neurons for normal and abnormal scan or a single neuron for abnormality.
+Relating back to the discussion of DLNN structures in section \ref{sec:CNN}, CNNs are a good candidate for the task in terms of training time and accuracy. The non-fully connected convolution layers reduce the number of parameters to be learned to a polynomial space compared to a shallow MLPs which grow exponentially with the dimensions of our problem. We can assert that the two assumptions about locality and invariance that CNNs have are very appropriate given the context. An abnormality would appear in a specific section of the scan and therefore it is logical to assume that the proximity of pixels is important to assess if something is wrong. Furthermore, a standard MLP would not necessarily be able to discern the same abnormality appearing in two different sections of our image, whereas a space-invariant CNN can.
 
-Having large quantities of data can give us a convincingly large cross-validation split for our test, train and validation sets, without having to consider problems regarding scarcity of data.
+\paragraph{}
+The input layer of the network is going to have a neuron for each pixel and the output is going to be a fully-connected layer with a neuron for each type of abnormality + the normal case. Trial-and-error procedure for estimating all the hyperparameters (depth, height and width of kernels, stride and padding) of the CNN are going to be required as there is no universally "good" network. The architecture, i.e. number of convolution-pooling pairs + fully connected layers at the end are also going to be tuned by a similar exploratory incremental approach as discussed in section \ref{sec:creation}.
 
-%inputs outputs
-%convolutions
-%evaluation
+\paragraph{}
+Having large quantities of data gives us a convincing cross-validation split for our test, train and validation sets, without having to consider problems regarding scarcity of data (i.e. overfitting). This helps guarantee the efficacy of our model. Good practices for evaluating against the unbiased test set and using the least complex model with the highest accuracy as discussed in \ref{sec:creation} still apply to DLNNs.
 
 \end{document}
